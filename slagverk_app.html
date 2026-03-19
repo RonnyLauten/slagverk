@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Slagverk</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.27.0/lib/msal-browser.min.js"></script>
+  <style>
+    :root {
+      --bg: #0F0F0F;
+      --surface: #1C1C1E;
+      --surface2: #2C2C2E;
+      --surface3: #3A3A3C;
+      --border: #38383A;
+      --accent: #FF6B35;
+      --accent-bg: rgba(255,107,53,0.12);
+      --text: #F2F2F7;
+      --text2: #8E8E93;
+      --text3: #48484A;
+      --green: #30D158;
+      --green-bg: rgba(48,209,88,0.12);
+      --yellow: #FFD60A;
+      --yellow-bg: rgba(255,214,10,0.12);
+      --red: #FF453A;
+      --nav-h: 60px;
+      --font: 'IBM Plex Sans', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+      --r: 12px;
+      --r-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.5; overscroll-behavior: none; }
+    #app { max-width: 600px; margin: 0 auto; min-height: 100dvh; position: relative; }
+
+    /* Screens */
+    .screen { display: none; padding: 0 16px calc(var(--nav-h) + 20px + env(safe-area-inset-bottom)); }
+    .screen.active { display: block; animation: fadeUp 0.18s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Nav */
+    #bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 600px;
+      height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+      background: rgba(20,20,22,0.94); backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--border);
+      display: flex; z-index: 100;
+    }
+    .nav-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; background: none; border: none; color: var(--text3); font-family: var(--font);
+      font-size: 10px; font-weight: 600; letter-spacing: 0.3px; cursor: pointer;
+      padding-bottom: env(safe-area-inset-bottom); transition: color 0.15s; text-transform: uppercase;
+    }
+    .nav-btn.active { color: var(--accent); }
+    .nav-btn svg { width: 22px; height: 22px; }
+
+    /* Screen header */
+    .s-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 0 16px; }
+    .s-title { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; }
+
+    /* Cards */
+    .card { background: var(--surface); border-radius: var(--r); border: 1px solid var(--border); overflow: hidden; margin-bottom: 10px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; }
+    .card-body { padding: 0 16px 14px; border-top: 1px solid var(--border); }
+    .card-body.hidden { display: none; }
+
+    /* Form */
+    .form-row { display: flex; gap: 10px; padding: 0 16px; }
+    .form-group { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+    input, select, textarea {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-sm);
+      color: var(--text); font-family: var(--font); font-size: 15px; padding: 10px 12px;
+      width: 100%; outline: none; transition: border-color 0.15s; -webkit-appearance: none; appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8E93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 16px; border-radius: var(--r-sm); border: none; font-family: var(--font);
+      font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s, transform 0.1s; white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+    .btn-danger { background: rgba(255,69,58,0.12); color: var(--red); border: 1px solid rgba(255,69,58,0.2); }
+    .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 7px; }
+    .btn-full { width: 100%; }
+    .btn-icon { width: 36px; height: 36px; padding: 0; flex-shrink: 0; }
+
+    /* Category sections */
+    .cat-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; user-select: none; }
+    .cat-title { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+    .cat-badge { background: var(--surface3); color: var(--text2); font-size: 11px; font-family: var(--mono); padding: 2px 6px; border-radius: 4px; }
+    .cat-badge.active { background: var(--accent-bg); color: var(--accent); }
+    .hw-badge { background: var(--yellow-bg); color: var(--yellow); font-size: 11px; font-family: var(--mono); padding: 2px 6px; border-radius: 4px; }
+    .cat-chevron { color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
+    .cat-chevron.open { transform: rotate(180deg); }
+
+    /* Exercise items */
+    .ex-item { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+    .ex-item:last-child { border-bottom: none; }
+    .ex-check {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); background: none;
+      flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s; font-size: 17px; line-height: 1;
+    }
+    .ex-check.done { border-color: transparent; background: none; }
+    .ex-text { flex: 1; font-size: 14px; line-height: 1.4; word-break: break-word; }
+    .ex-text.done { color: var(--text2); text-decoration: line-through; }
+    .ex-star { width: 30px; height: 30px; border-radius: 6px; border: none; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: opacity 0.15s; flex-shrink: 0; opacity: 0.28; }
+    .ex-star.on { opacity: 1; }
+    .ex-star.blocked { opacity: 0.1; cursor: not-allowed; }
+    .ex-del { width: 28px; height: 28px; border-radius: 6px; border: none; background: none; color: var(--text3); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: color 0.15s; }
+    .ex-del:hover, .ex-del:active { color: var(--red); }
+
+    .add-row { display: flex; gap: 8px; padding-top: 10px; }
+    .next-page-hint { display:flex; align-items:center; gap:6px; padding:3px 4px 3px 30px; font-size:11px; color:var(--text3); line-height:1.4; }
+    .next-page-hint button { font-size:11px; padding:1px 7px; border-radius:5px; border:1px solid var(--border); background:none; color:var(--accent); cursor:pointer; flex-shrink:0; font-family:var(--font); }
+    .freetext-row { display: flex; gap: 8px; padding-top: 8px; align-items: center; }
+    .inline-input { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--text); font-family: var(--font); font-size: 14px; padding: 8px 10px; outline: none; flex: 1; }
+    .inline-input:focus { border-color: var(--accent); }
+
+    /* Action bar */
+    .action-bar { display: flex; gap: 10px; margin-top: 6px; }
+    .edit-banner { background:var(--accent-bg); border:1px solid rgba(255,107,53,0.35); border-radius:10px; padding:10px 14px; font-size:13px; color:var(--accent); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+    .edit-banner svg { flex-shrink:0; }
+
+    /* Modals */
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 200; display: none; align-items: flex-end; }
+    .modal-bg.open { display: flex; }
+    .modal-sheet {
+      background: var(--surface); border-radius: 16px 16px 0 0; width: 100%;
+      max-height: 88dvh; display: flex; flex-direction: column;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .modal-handle { width: 36px; height: 4px; background: var(--surface3); border-radius: 2px; margin: 12px auto 0; flex-shrink: 0; }
+    .modal-head { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .modal-body { flex: 1; overflow-y: auto; padding: 10px 16px; }
+    .modal-filters { padding: 10px 16px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+
+    /* Search results */
+    .sr-item { padding: 11px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .sr-item:last-child { border-bottom: none; }
+    .sr-item:active { background: var(--surface2); margin: 0 -16px; padding: 11px 16px; }
+    .sr-title { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+    .sr-meta { font-size: 12px; color: var(--text2); font-family: var(--mono); }
+
+    /* History */
+    .sess-item { padding: 13px 16px; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .sess-item:last-child { border-bottom: none; }
+    .sess-date { font-weight: 600; margin-bottom: 2px; }
+    .sess-meta { font-size: 13px; color: var(--text2); }
+    .sess-detail { padding: 0 16px 14px; }
+    .sess-cat-head { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 6px; }
+    .sess-cat-section { margin-left: 0; }
+    .sess-sub { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin: 6px 0 3px; }
+    .sess-ex-line { font-size: 13px; color: var(--text); padding: 2px 0; }
+
+    /* Books */
+    .book-item { padding: 10px 16px; border-bottom: 1px solid var(--border); cursor: pointer; display: flex; align-items: flex-start; gap: 10px; transition: background 0.1s; }
+    .book-item:last-child { border-bottom: none; }
+    .book-item:active { background: var(--surface2); }
+    .book-item-main { flex: 1; min-width: 0; }
+    .book-ex-name { font-size: 14px; font-weight: 500; }
+    .book-focus { font-size: 12px; color: var(--text2); margin-top: 3px; }
+    .book-tags { display: flex; align-items: center; gap: 5px; margin-bottom: 4px; flex-wrap: wrap; }
+    .tag-page { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-bg); padding: 2px 6px; border-radius: 4px; }
+    .tag-lvl  { font-family: var(--mono); font-size: 11px; color: var(--text2); background: var(--surface3); padding: 2px 6px; border-radius: 4px; }
+    .tag-cat  { font-size: 11px; font-weight: 500; color: var(--text2); background: var(--surface3); padding: 2px 6px; border-radius: 4px; }
+    .book-group-head { padding: 12px 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+    .book-group-title { flex: 1; }
+    .book-group-name { font-weight: 600; font-size: 15px; }
+    .book-group-author { font-size: 12px; color: var(--text2); margin-top: 1px; }
+    .filter-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-chip { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 100px; font-size: 13px; font-weight: 500; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all 0.15s; }
+    .filter-chip.on { background: var(--accent-bg); color: var(--accent); border-color: transparent; }
+
+    /* Settings */
+    .settings-block { margin-bottom: 24px; }
+    .s-block-title { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.6px; padding: 12px 0 8px; }
+    .list-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--border); cursor: pointer; }
+    .list-row:last-child { border-bottom: none; }
+    .list-row-name { font-weight: 500; }
+    .list-row-meta { font-size: 13px; color: var(--text2); margin-top: 2px; }
+    .list-row-arrow { color: var(--text3); font-size: 14px; }
+    .level-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .lvl-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); background: none; color: var(--text2); font-family: var(--mono); font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .lvl-btn.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));
+      left: 50%; transform: translateX(-50%) translateY(16px);
+      background: var(--surface3); color: var(--text); padding: 10px 18px;
+      border-radius: 100px; font-size: 14px; font-weight: 500; opacity: 0;
+      transition: all 0.25s; pointer-events: none; z-index: 400; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Empty state */
+    .empty { text-align: center; padding: 44px 20px; color: var(--text2); }
+    .empty-icon { font-size: 36px; margin-bottom: 10px; }
+    .empty-msg { font-size: 14px; color: var(--text3); margin-top: 4px; }
+
+    /* Section divider */
+    .divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+    /* Results count */
+    .results-count { font-size: 12px; color: var(--text3); font-family: var(--mono); padding: 6px 0 2px; }
+
+    /* Print */
+    @media print {
+      body { background: white; color: black; font-family: Georgia, serif; }
+      #app { display: none; }
+      #print-view { display: block !important; padding: 32px; }
+      .pw-title { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
+      .pw-date { font-size: 14px; color: #666; margin-bottom: 24px; }
+      .pw-cat { font-size: 16px; font-weight: bold; margin: 18px 0 8px; border-bottom: 2px solid #000; padding-bottom: 4px; }
+      .pw-ex { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 14px; border-bottom: 1px solid #eee; }
+      .pw-box { width: 16px; height: 16px; border: 2px solid #000; border-radius: 3px; flex-shrink: 0; }
+      .pw-footer { margin-top: 32px; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #ccc; padding-top: 12px; }
+    }
+    #print-view { display: none; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 3px; } ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+    /* ── Calendar ─────────────────────────────────────── */
+    .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .cal-month-title { font-size:18px; font-weight:600; text-transform:capitalize; letter-spacing:-0.3px; }
+    .cal-grid { background:var(--surface); border-radius:var(--r); border:1px solid var(--border); overflow:hidden; margin-bottom:14px; }
+    .cal-dh-row { display:grid; grid-template-columns:repeat(7,1fr); background:var(--surface2); border-bottom:1px solid var(--border); }
+    .cal-dh { text-align:center; padding:7px 0; font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:0.4px; }
+    .cal-cells { display:grid; grid-template-columns:repeat(7,1fr); }
+    .cal-cell { min-height:60px; padding:5px 3px 4px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
+    .cal-cell:nth-child(7n) { border-right:none; }
+    .cal-cell.cal-empty { background:rgba(0,0,0,0.18); }
+    .cal-cell.cal-has-sess { cursor:pointer; }
+    .cal-cell.cal-has-sess:active { background:var(--surface2); }
+    .cal-day-num { font-size:13px; font-weight:500; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0; }
+    .cal-cell.cal-today .cal-day-num { background:var(--accent); color:#fff; font-weight:600; }
+    .cal-cell.cal-weekend .cal-day-num { color:var(--text2); }
+    .cal-dots { display:flex; flex-wrap:wrap; gap:2px; justify-content:center; max-width:34px; }
+    .cal-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .cal-legend { display:flex; flex-wrap:wrap; gap:6px 14px; padding:2px 0 8px; }
+    .cal-legend-item { display:flex; align-items:center; gap:6px; font-size:12px; cursor:pointer; border-radius:6px; padding:3px 5px; margin:-3px -5px; }
+    .cal-legend-item:hover { background:var(--surface2); }
+    .cal-legend-item:active { background:var(--surface3); }
+    .cal-legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .cal-legend-count { color:var(--text3); font-family:var(--mono); font-size:11px; }
+    .cal-cell-names { display:flex; flex-direction:column; gap:1px; width:100%; }
+    .cal-cell-name { display:flex; align-items:center; gap:2px; font-size:8px; color:var(--text2); line-height:1.3; overflow:hidden; }
+    .cal-cell-name-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+    .cal-day-session { padding:12px 0; border-bottom:1px solid var(--border); }
+    .cal-day-session:last-child { border-bottom:none; }
+    .cal-sess-student { display:flex; align-items:center; gap:8px; font-weight:600; font-size:15px; margin-bottom:4px; }
+    .cal-sess-color { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .cal-sess-time { font-size:13px; color:var(--text2); font-family:var(--mono); }
+    .cal-sess-cats { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+    .cal-sess-cat { font-size:12px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:3px 8px; color:var(--text2); }
+    .cal-sess-cat b { color:var(--text); font-weight:500; }
+    .cal-go-btn { font-size:12px; color:var(--accent); font-weight:500; cursor:pointer; text-decoration:none; background:none; border:none; font-family:var(--font); padding:0; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="screen-practice" class="screen active"></div>
+  <div id="screen-history" class="screen"></div>
+  <div id="screen-calendar" class="screen"></div>
+  <div id="screen-books" class="screen"></div>
+  <div id="screen-settings" class="screen"></div>
+
+  <nav id="bottom-nav">
+    <button class="nav-btn active" data-tab="practice" onclick="switchTab('practice')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+      <span>Øving</span>
+    </button>
+    <button class="nav-btn" data-tab="history" onclick="switchTab('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Historikk</span>
+    </button>
+    <button class="nav-btn" data-tab="calendar" onclick="switchTab('calendar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Kalender</span>
+    </button>
+    <button class="nav-btn" data-tab="books" onclick="switchTab('books')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Bøker</span>
+    </button>
+    <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')" style="position:relative">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span id="sync-dot" style="display:none;position:absolute;top:6px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--green)"></span>
+      <span>Innst.</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Search Modal -->
+<div id="modal-search" class="modal-bg" onclick="if(event.target===this)closeSearchModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h2 id="modal-search-title" style="font-size:17px;font-weight:600">Søk i database</h2>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="closeSearchModal()">✕</button>
+    </div>
+    <div class="modal-filters">
+      <input type="text" id="search-q" placeholder="Søk øvelse, bok, fokus…" oninput="renderSearchResults()" style="margin-bottom:8px">
+      <div style="display:flex;gap:8px">
+        <select id="search-cat" onchange="renderSearchResults()" style="flex:1">
+          <option value="">Alle kategorier</option>
+          <option value="TEK">Teknikk</option><option value="SD">Skarptromme</option>
+          <option value="Timp">Timpani</option><option value="Melodisk">Melodisk</option><option value="Kit">Trommesett</option>
+        </select>
+        <select id="search-lvl" onchange="renderSearchResults()" style="flex:1">
+          <option value="">Alle nivåer</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-body" id="search-results"></div>
+  </div>
+</div>
+
+<!-- Template Modal -->
+<div id="modal-tpl" class="modal-bg" onclick="if(event.target===this)closeTplModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h2 style="font-size:17px;font-weight:600">Last fra mal</h2>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="closeTplModal()">✕</button>
+    </div>
+    <div class="modal-body" id="tpl-list"></div>
+  </div>
+</div>
+
+<!-- Edit Student Modal -->
+<div id="modal-student" class="modal-bg" onclick="if(event.target===this)closeStudentModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h2 id="modal-student-title" style="font-size:17px;font-weight:600">Elev</h2>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="closeStudentModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-student-body"></div>
+  </div>
+</div>
+
+<!-- Edit Template Modal -->
+<div id="modal-tpl-edit" class="modal-bg" onclick="if(event.target===this)closeTplEditModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h2 id="modal-tpl-edit-title" style="font-size:17px;font-weight:600">Mal</h2>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="closeTplEditModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-tpl-edit-body"></div>
+  </div>
+</div>
+
+<!-- Edit Exercise Modal -->
+<div id="modal-ex-edit" class="modal-bg" onclick="if(event.target===this)closeEditExercise()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h2 style="font-size:17px;font-weight:600">Rediger øvelse</h2>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="closeEditExercise()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-ex-edit-body"></div>
+  </div>
+</div>
+
+<!-- Calendar day detail modal -->
+<div id="modal-cal-day" class="modal-bg" onclick="if(event.target===this)closeCalDay()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h2 id="modal-cal-day-title" style="font-size:17px;font-weight:600"></h2>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="closeCalDay()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-cal-day-body"></div>
+  </div>
+</div>
+
+<!-- Hidden file inputs (outside dynamic HTML to avoid double-trigger) -->
+<input id="input-excel"      type="file" accept=".xlsx" style="display:none" onchange="importExcel(this)">
+<input id="input-json"       type="file" accept=".json"  style="display:none" onchange="importJSON(this)">
+<input id="input-books-csv"  type="file" accept=".csv"   style="display:none" onchange="importBooksCSV(this)">
+
+<!-- Print view -->
+<div id="print-view"></div>
+<div id="toast"></div>
+
+<script>
+// =====================================================================
+// CONSTANTS
+// =====================================================================
+const CATS = ['TEK','SD','Timp','Melodisk','Kit'];
+const CAT_LABELS = { TEK:'Teknikk', SD:'Skarptromme', Timp:'Timpani', Melodisk:'Melodisk', Kit:'Trommesett' };
+const CAT_ICONS  = { TEK:'🥁', SD:'🪘', Timp:'🔔', Melodisk:'🎵', Kit:'🎸' };
+const LS = { S:'rl_students', E:'rl_exercises', X:'rl_sessions', T:'rl_templates' };
+
+// =====================================================================
+// FILE SYNC — File System Access API (Chrome/Edge)
+// Data is always kept in localStorage as fast cache.
+// When a file handle is connected, every save also writes slagverk_data.json.
+// The file handle is persisted in IndexedDB so it survives page reloads.
+// =====================================================================
+let fileHandle = null;
+let _pendingHandle = null; // handle that needs re-permission
+const fsaSupported = 'showOpenFilePicker' in window;
+
+// --- IndexedDB: store/load file handle across reloads ---
+function _idbOpen(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open('slagverk_fsa',1);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore('h');
+    r.onsuccess=e=>res(e.target.result);
+    r.onerror=e=>rej(e.target.error);
+  });
+}
+async function idbSaveHandle(h){
+  try{ const db=await _idbOpen(); const tx=db.transaction('h','readwrite'); tx.objectStore('h').put(h,'f'); await new Promise((r,j)=>{tx.oncomplete=r;tx.onerror=j;}); }catch(e){ console.warn('idbSave:',e); }
+}
+async function idbLoadHandle(){
+  try{ const db=await _idbOpen(); return await new Promise((r,j)=>{ const tx=db.transaction('h','readonly'); const q=tx.objectStore('h').get('f'); q.onsuccess=()=>r(q.result||null); q.onerror=j; }); }catch(e){ return null; }
+}
+async function idbClearHandle(){
+  try{ const db=await _idbOpen(); const tx=db.transaction('h','readwrite'); tx.objectStore('h').delete('f'); }catch(e){}
+}
+
+// --- Write all in-memory data to the connected JSON file ---
+let _saveFileTimer=null;
+async function saveToFile(){
+  if(!fileHandle) return;
+  try{
+    const data={students,exercises,sessions,templates,savedAt:new Date().toISOString()};
+    const w=await fileHandle.createWritable();
+    await w.write(JSON.stringify(data,null,2));
+    await w.close();
+    updateSyncDot('ok');
+  }catch(err){
+    console.error('saveToFile:',err);
+    toast('⚠️ Kunne ikke skrive til datafil');
+    updateSyncDot('err');
+  }
+}
+function scheduleSaveToFile(){
+  const hasFile=!!fileHandle;
+  const hasGraph=!!graphAccount();
+  if(!hasFile&&!hasGraph) return;
+  clearTimeout(_saveFileTimer);
+  _saveFileTimer=setTimeout(async()=>{
+    if(hasFile) await saveToFile();
+    if(hasGraph) await saveToGraph();
+  },600);
+}
+function updateSyncDot(state){
+  const el=document.getElementById('sync-dot');
+  if(!el) return;
+  el.style.display = fileHandle ? 'inline-block' : 'none';
+  el.style.background = state==='ok' ? 'var(--green)' : '#FF453A';
+  el.title = state==='ok' ? 'Synkronisert med fil' : 'Lagringsfeil';
+}
+
+// --- Load data from a given file handle (requests permission if needed) ---
+async function loadFromHandle(handle){
+  let perm=await handle.queryPermission({mode:'readwrite'});
+  if(perm!=='granted') perm=await handle.requestPermission({mode:'readwrite'});
+  if(perm!=='granted'){ toast('Tilgang nektet'); return false; }
+  const file=await handle.getFile();
+  const data=JSON.parse(await file.text());
+  if(data.students)  students=data.students;
+  if(data.exercises) exercises=data.exercises;
+  if(data.sessions)  sessions=data.sessions;
+  if(data.templates) templates=data.templates;
+  // Mirror to localStorage so existing code keeps working
+  lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
+  fileHandle=handle;
+  _pendingHandle=null;
+  await idbSaveHandle(handle);
+  updateSyncDot('ok');
+  return true;
+}
+
+// --- Open an existing slagverk_data.json ---
+async function connectDataFile(){
+  if(!fsaSupported){ toast('Krever Chrome eller Edge for direkte filsynk'); return; }
+  try{
+    const [h]=await window.showOpenFilePicker({types:[{description:'Datafil',accept:{'application/json':['.json']}}]});
+    const ok=await loadFromHandle(h);
+    if(ok){ toast('📂 Tilkoblet: '+h.name); renderSettings(); renderPractice(); }
+  }catch(e){ if(e.name!=='AbortError') toast('Feil: '+e.message); }
+}
+
+// --- Create a new slagverk_data.json and save current data into it ---
+async function createNewDataFile(){
+  if(!fsaSupported){ toast('Krever Chrome eller Edge for direkte filsynk'); return; }
+  try{
+    const h=await window.showSaveFilePicker({suggestedName:'slagverk_data.json',types:[{description:'Datafil',accept:{'application/json':['.json']}}]});
+    let perm=await h.queryPermission({mode:'readwrite'});
+    if(perm!=='granted') await h.requestPermission({mode:'readwrite'});
+    fileHandle=h;
+    await idbSaveHandle(h);
+    await saveToFile();
+    toast('📂 Ny datafil opprettet: '+h.name);
+    renderSettings();
+  }catch(e){ if(e.name!=='AbortError') toast('Feil: '+e.message); }
+}
+
+// --- Disconnect (forget) the connected file ---
+async function disconnectDataFile(){
+  fileHandle=null; _pendingHandle=null;
+  await idbClearHandle();
+  updateSyncDot(null);
+  renderSettings();
+  toast('Datafil frakoblet');
+}
+
+// --- Re-connect a handle that lost permission (e.g. after restart) ---
+async function reconnectPending(){
+  if(!_pendingHandle) return;
+  const ok=await loadFromHandle(_pendingHandle);
+  if(ok){ toast('📂 Tilkoblet igjen'); renderSettings(); renderPractice(); }
+}
+
+// --- Called at startup: try to restore file handle from IndexedDB ---
+async function tryAutoConnect(){
+  if(!fsaSupported) return;
+  try{
+    const h=await idbLoadHandle();
+    if(!h) return;
+    const perm=await h.queryPermission({mode:'readwrite'});
+    if(perm==='granted'){
+      const ok=await loadFromHandle(h);
+      if(ok){ renderSettings(); renderPractice(); }
+    } else {
+      // Permission needs to be re-granted by user gesture — show prompt in Settings
+      _pendingHandle=h;
+      renderSettings();
+    }
+  }catch(e){ console.warn('tryAutoConnect:',e); }
+}
+
+// =====================================================================
+// MICROSOFT GRAPH API SYNC (iPhone / all browsers)
+// Uses MSAL.js for OAuth2 + Microsoft Graph to read/write slagverk_data.json
+// in the user's OneDrive. Works alongside File System Access API.
+// Configure GRAPH_CLIENT_ID via Settings after registering the Azure app.
+// =====================================================================
+const GRAPH_REDIRECT_URI = 'https://ronnylauten.github.io/slagverk/slagverk_app.html';
+const GRAPH_FILE_PATH    = '/me/drive/root:/Slagverk/slagverk_data.json:/content';
+const GRAPH_SCOPES       = ['Files.ReadWrite'];
+
+let _msal = null;
+
+function graphClientId(){ return localStorage.getItem('rl_graph_client_id')||''; }
+function saveGraphClientId(id){ localStorage.setItem('rl_graph_client_id',id.trim()); }
+
+function initMsal(){
+  const cid=graphClientId();
+  if(!cid||!window.msal) return;
+  try{
+    _msal=new msal.PublicClientApplication({
+      auth:{ clientId:cid, authority:'https://login.microsoftonline.com/consumers', redirectUri:GRAPH_REDIRECT_URI },
+      cache:{ cacheLocation:'localStorage', storeAuthStateInCookie:true }
+    });
+  }catch(e){ console.warn('initMsal:',e); _msal=null; }
+}
+
+function graphAccount(){ return _msal?.getAllAccounts?.()?.[0]||null; }
+
+async function getGraphToken(){
+  if(!_msal||!graphAccount()) return null;
+  try{
+    const r=await _msal.acquireTokenSilent({scopes:GRAPH_SCOPES,account:graphAccount()});
+    return r.accessToken;
+  }catch(e){
+    try{
+      const r=await _msal.acquireTokenPopup({scopes:GRAPH_SCOPES,account:graphAccount()});
+      return r.accessToken;
+    }catch(e2){ return null; }
+  }
+}
+
+async function signInMicrosoft(){
+  if(!_msal){ toast('Lim inn Client ID i feltet over og prøv igjen'); return; }
+  try{
+    // Try popup first; works on desktop. On mobile Safari use redirect.
+    let result;
+    try{
+      result=await _msal.loginPopup({scopes:GRAPH_SCOPES});
+    }catch(pe){
+      if(pe.name==='BrowserAuthError'||pe.errorCode==='popup_window_error'||pe.errorCode==='empty_window_error'){
+        await _msal.loginRedirect({scopes:GRAPH_SCOPES}); return; // page will redirect
+      }
+      throw pe;
+    }
+    if(result){ await loadFromGraph(); renderSettings(); }
+  }catch(e){ if(e.errorCode!=='user_cancelled') toast('Innlogging feilet: '+(e.message||e.errorCode||e)); }
+}
+
+async function signOutMicrosoft(){
+  if(!_msal||!graphAccount()) return;
+  try{ await _msal.logoutPopup({account:graphAccount()}); }catch(e){}
+  renderSettings();
+  toast('Logget ut av Microsoft');
+}
+
+async function loadFromGraph(){
+  const token=await getGraphToken();
+  if(!token) return;
+  try{
+    const resp=await fetch('https://graph.microsoft.com/v1.0'+GRAPH_FILE_PATH,{headers:{'Authorization':'Bearer '+token}});
+    if(resp.status===404){ toast('Ingen datafil i OneDrive ennå — lagres ved neste lagring'); return; }
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const data=await resp.json();
+    if(data.students)  students=data.students;
+    if(data.exercises) exercises=data.exercises;
+    if(data.sessions)  sessions=data.sessions;
+    if(data.templates) templates=data.templates;
+    lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
+    toast('📱 Lastet fra OneDrive');
+    renderPractice(); renderSettings();
+  }catch(e){ toast('Feil ved lesing fra OneDrive: '+e.message); }
+}
+
+async function saveToGraph(){
+  const token=await getGraphToken();
+  if(!token) return;
+  try{
+    const data={students,exercises,sessions,templates,savedAt:new Date().toISOString()};
+    const resp=await fetch('https://graph.microsoft.com/v1.0'+GRAPH_FILE_PATH,{
+      method:'PUT',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body:JSON.stringify(data,null,2)
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    updateSyncDot('ok');
+  }catch(e){ toast('Feil ved lagring til OneDrive: '+e.message); updateSyncDot('err'); }
+}
+
+// Handle redirect callback (called after loginRedirect on mobile)
+async function handleMsalRedirect(){
+  if(!_msal) return;
+  try{
+    const result=await _msal.handleRedirectPromise();
+    if(result){ await loadFromGraph(); renderSettings(); }
+  }catch(e){ console.warn('handleMsalRedirect:',e); }
+}
+
+// =====================================================================
+// DATA LAYER
+// =====================================================================
+let students=[], exercises=[], sessions=[], templates=[];
+
+function lsGet(k){ try{return JSON.parse(localStorage.getItem(k))||[];}catch{return[];} }
+function lsSave(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+function loadAll(){ students=lsGet(LS.S); exercises=lsGet(LS.E); sessions=lsGet(LS.X); templates=lsGet(LS.T); }
+function saveStudents(){ lsSave(LS.S,students); scheduleSaveToFile(); }
+function saveExercises(){ lsSave(LS.E,exercises); scheduleSaveToFile(); }
+function saveSessions(){ lsSave(LS.X,sessions); scheduleSaveToFile(); }
+function saveTemplates(){ lsSave(LS.T,templates); scheduleSaveToFile(); }
+
+// =====================================================================
+// HELPERS
+// =====================================================================
+function uid(){ return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function nextOccurrence(dag){
+  const map={mandag:1,tirsdag:2,onsdag:3,torsdag:4,fredag:5,lørdag:6,søndag:0};
+  const target=map[(dag||'').toLowerCase()];
+  if(target===undefined) return todayStr();
+  const now=new Date();
+  let diff=target-now.getDay();
+  if(diff<0) diff+=7;
+  const d=new Date(now); d.setDate(now.getDate()+diff);
+  return d.toISOString().slice(0,10);
+}
+function fmtDate(d){ if(!d)return''; try{ return new Date(d+'T12:00').toLocaleDateString('no-NO',{day:'numeric',month:'long',year:'numeric'}); }catch{return d;} }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function getStudent(id){ return students.find(s=>s.id===id); }
+function getExercise(id){ return exercises.find(e=>e.id===id); }
+function exLabel(item){
+  if(item.type==='db'){
+    const ex=getExercise(item.exerciseId);
+    if(!ex) return item.text||'?';
+    return (ex.bokKort||ex.bok||'?')+' — '+ex.øvelse+', s.'+(ex.side||'?');
+  }
+  return item.text||'';
+}
+function initCats(){ const c={}; CATS.forEach(k=>c[k]={items:[]}); return c; }
+// Parse side values like "3", "3a", "3b", "37" into {num, letter} for sorting
+function parseSide(s){ const m=String(s??'').match(/^(\d+)([a-zA-Z]*)$/); return m?{num:parseInt(m[1]),letter:m[2].toLowerCase()}:{num:0,letter:''}; }
+function compareSides(a,b){ const pa=parseSide(a),pb=parseSide(b); return pa.num!==pb.num?pa.num-pb.num:pa.letter<pb.letter?-1:pa.letter>pb.letter?1:0; }
+// Find the next exercise in the same book by sorted side order (handles "3a"→"3b"→"4")
+function findNextExercise(ex){
+  const bookExs=exercises.filter(e=>e.bokKort===ex.bokKort);
+  const sides=[...new Set(bookExs.map(e=>String(e.side??'')))].sort(compareSides);
+  const curIdx=sides.indexOf(String(ex.side??''));
+  if(curIdx===-1||curIdx>=sides.length-1) return null;
+  const nextSide=sides[curIdx+1];
+  return bookExs.find(e=>String(e.side??'')===nextSide)||null;
+}
+function hwCount(cat){ return (practiceState?.categories[cat]?.items||[]).filter(i=>i.homework).length; }
+function filterExercises(q,cat,lvl,limit=60){
+  let r=exercises;
+  if(cat) r=r.filter(e=>e.kategori===cat);
+  if(lvl) r=r.filter(e=>String(e.nivå)===String(lvl));
+  if(q){ const ql=q.toLowerCase(); r=r.filter(e=>(e.øvelse||'').toLowerCase().includes(ql)||(e.bok||'').toLowerCase().includes(ql)||(e.bokKort||'').toLowerCase().includes(ql)||(e.fokus||'').toLowerCase().includes(ql)); }
+  return r.slice(0,limit);
+}
+
+// =====================================================================
+// STATE
+// =====================================================================
+let currentTab='practice';
+let practiceState=null;
+let catOpen={ TEK:true, SD:false, Timp:false, Melodisk:false, Kit:false };
+let catFreeText={ TEK:false, SD:false, Timp:false, Melodisk:false, Kit:false };
+let searchTargetCat=null;
+let histStudentId=null;
+let histOpenId=null;
+let booksQ='', booksCat='', booksLvl='', booksKeepFocus=false;
+let booksAddOpen=false;
+let settingsEditStudentId=null;
+let settingsEditTplId=null;
+let settingsEditAktiv=true;
+
+// =====================================================================
+// TOAST
+// =====================================================================
+function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2400); }
+
+// =====================================================================
+// NAVIGATION
+// =====================================================================
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='screen-'+tab));
+  if(tab==='practice') renderPractice();
+  else if(tab==='history') renderHistory();
+  else if(tab==='calendar') renderCalendar();
+  else if(tab==='books') renderBooks();
+  else if(tab==='settings') renderSettings();
+}
+
+// =====================================================================
+// PRACTICE SCREEN
+// =====================================================================
+function newPracticeState(){
+  const active=students.filter(s=>s.aktiv!==false);
+  const first=active[0]||null;
+  return {
+    studentId: first?.id||null,
+    date: first?.defaultDag ? nextOccurrence(first.defaultDag) : todayStr(),
+    time: first?.defaultTid||'',
+    categories: initCats(),
+    sessionId: null
+  };
+}
+
+function renderPractice(){
+  if(!practiceState) practiceState=newPracticeState();
+  const ps=practiceState;
+
+  const activeStudents=students.filter(s=>s.aktiv!==false);
+  const studOpts = activeStudents.map(s=>`<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(s.navn)}</option>`).join('');
+
+  const catsHtml = CATS.map(cat=>{
+    const data=ps.categories[cat];
+    const items=data.items;
+    const hw=items.filter(i=>i.homework).length;
+    const isOpen=catOpen[cat];
+    const isFreeText=catFreeText[cat];
+
+    const itemsHtml=items.map((item,idx)=>{
+      const blocked=!item.homework&&hw>=3;
+      // 1b: suggest next page for db-type exercises
+      let nextHint='';
+      if(item.type==='db'&&item.exerciseId){
+        const ex=getExercise(item.exerciseId);
+        if(ex&&ex.bokKort&&ex.side!=null){
+          const nextEx=findNextExercise(ex);
+          if(nextEx) nextHint=`<div class="next-page-hint">→ Neste: ${esc(nextEx.bokKort)} s.${nextEx.side} — ${esc(nextEx.øvelse)} <button onclick="addNextPage('${esc(nextEx.id)}','${cat}')">＋</button></div>`;
+        }
+      }
+      return `<div class="ex-item">
+        <button class="ex-check${item.done?' done':''}" onclick="toggleDone('${cat}',${idx})" aria-label="Gjennomgått">${item.done?'✅':''}</button>
+        <div class="ex-text${item.done?' done':''}">${esc(exLabel(item))}</div>
+        <button class="ex-star${item.homework?' on':''}${blocked?' blocked':''}" onclick="toggleHw('${cat}',${idx})" title="Lekse">📌</button>
+        <button class="ex-del" onclick="removeEx('${cat}',${idx})" title="Slett">×</button>
+      </div>${nextHint}`;
+    }).join('');
+
+    const freetextRow=isFreeText?`<div class="freetext-row">
+      <input class="inline-input" id="ft-${cat}" type="text" placeholder="Skriv øvelse og trykk Enter…" onkeydown="if(event.key==='Enter')submitFreeText('${cat}')">
+      <button class="btn btn-primary btn-sm" onclick="submitFreeText('${cat}')">Legg til</button>
+      <button class="btn btn-ghost btn-sm" onclick="cancelFreeText('${cat}')">✕</button>
+    </div>`:'';
+
+    return `<div class="card">
+      <div class="cat-header" onclick="toggleCat('${cat}')">
+        <div class="cat-title">
+          <span>${CAT_ICONS[cat]}</span>
+          <span>${CAT_LABELS[cat]}</span>
+          <span class="cat-badge${items.length?' active':''}">${items.length}</span>
+          ${hw>0?`<span class="hw-badge">📌 ${hw}/3</span>`:''}
+        </div>
+        <svg class="cat-chevron${isOpen?' open':''}" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="card-body${isOpen?'':' hidden'}">
+        ${items.length?itemsHtml:'<div style="color:var(--text3);font-size:13px;padding:6px 0 4px">Ingen øvelser ennå</div>'}
+        ${freetextRow}
+        <div class="add-row">
+          <button class="btn btn-secondary btn-sm" onclick="openSearchModal('${cat}')">🔎＋ Fra database</button>
+          <button class="btn btn-ghost btn-sm" onclick="openFreeText('${cat}')">＋ Fritekst</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const noStudents=activeStudents.length===0;
+
+  document.getElementById('screen-practice').innerHTML=`
+    <div class="s-head">
+      <div class="s-title">🥁 Øving</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="copyLastSession()" title="Kopier øvelser fra forrige økt">↩ Forrige</button>
+        <button class="btn btn-ghost btn-sm" onclick="openTplModal()">📋 Mal</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="padding:14px 16px 12px">
+        ${noStudents?`<div style="color:var(--text2);font-size:14px">Ingen elever — legg til under <strong>Innstillinger</strong></div>`:`<div class="form-group"><label>Elev</label><select onchange="setPracticeStudent(this.value)">${studOpts}</select></div>`}
+      </div>
+      <div class="form-row" style="padding-bottom:14px">
+        <div class="form-group"><label>Dato</label><input type="date" value="${esc(ps.date)}" onchange="practiceSetDate(this.value)"></div>
+        <div class="form-group"><label>Tid</label><input type="text" placeholder="16:30–17:00" value="${esc(ps.time)}" oninput="practiceState.time=this.value"></div>
+      </div>
+    </div>
+    ${ps.sessionId?`<div class="edit-banner"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11.5 1.5L13.5 3.5L5 12H3V10L11.5 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Du redigerer øvingen fra <strong style="margin:0 3px">${fmtDate(ps.date)}</strong> — lagre for å oppdatere.</div>`:''}
+    ${catsHtml}
+    <div class="action-bar">
+      <button class="btn btn-primary" style="flex:1" onclick="saveSession()">💾 Lagre økt</button>
+      <button class="btn btn-secondary btn-icon" onclick="printHomework()" title="Print lekse" style="font-size:18px">🖨</button>
+    </div>
+  `;
+}
+
+// Load an existing session's exercises into practiceState (preserves done/homework flags)
+function loadSessionIntoPractice(sess){
+  practiceState.sessionId=sess.id;
+  if(sess.tid) practiceState.time=sess.tid;
+  CATS.forEach(cat=>{
+    const planlagt=sess.kategorier?.[cat]?.planlagt||[];
+    const gjennomgått=sess.kategorier?.[cat]?.gjennomgått||[];
+    const lekse=sess.kategorier?.[cat]?.lekse||[];
+    const matchItem=(item,list)=>list.some(x=>
+      (item.exerciseId&&x.exerciseId&&item.exerciseId===x.exerciseId)||
+      (!item.exerciseId&&item.text&&x.text===item.text)
+    );
+    practiceState.categories[cat].items=planlagt.map(i=>({
+      ...i,id:uid(),done:matchItem(i,gjennomgått),homework:matchItem(i,lekse)
+    }));
+  });
+}
+
+// Called when the date field changes — loads existing session if one exists for this student+date
+function practiceSetDate(dateStr){
+  practiceState.date=dateStr;
+  if(practiceState.studentId){
+    const existing=sessions.find(s=>s.elevId===practiceState.studentId&&s.dato===dateStr);
+    if(existing){
+      loadSessionIntoPractice(existing);
+    } else if(practiceState.sessionId){
+      // Was editing an old session; switched to a date with no session → blank mode
+      practiceState.sessionId=null;
+      CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; });
+    }
+  }
+  renderPractice();
+}
+
+function setPracticeStudent(id){
+  practiceState.studentId=id;
+  practiceState.sessionId=null;
+  CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; });
+  const st=getStudent(id);
+  if(st){
+    if(st.defaultTid) practiceState.time=st.defaultTid;
+    // Date is intentionally NOT changed when switching students
+  }
+  // Check if the current date already has a session for this student
+  if(practiceState.date){
+    const existing=sessions.find(s=>s.elevId===id&&s.dato===practiceState.date);
+    if(existing) loadSessionIntoPractice(existing);
+  }
+  renderPractice();
+}
+
+// Navigate to Practice tab with a specific student+date pre-loaded in edit mode
+function openPracticeForSession(studentId, dateStr){
+  document.getElementById('modal-cal-day').classList.remove('open');
+  practiceState=newPracticeState();
+  practiceState.studentId=studentId;
+  practiceState.date=dateStr;
+  const st=getStudent(studentId);
+  if(st?.defaultTid) practiceState.time=st.defaultTid;
+  const existing=sessions.find(s=>s.elevId===studentId&&s.dato===dateStr);
+  if(existing) loadSessionIntoPractice(existing);
+  catOpen={TEK:true,SD:true,Timp:true,Melodisk:true,Kit:true};
+  catFreeText={TEK:false,SD:false,Timp:false,Melodisk:false,Kit:false};
+  switchTab('practice');
+}
+function toggleCat(cat){ catOpen[cat]=!catOpen[cat]; renderPractice(); }
+function openFreeText(cat){ catFreeText[cat]=true; catOpen[cat]=true; renderPractice(); setTimeout(()=>{ const el=document.getElementById('ft-'+cat); if(el)el.focus(); },50); }
+function cancelFreeText(cat){ catFreeText[cat]=false; renderPractice(); }
+function copyLastSession(){
+  if(!practiceState?.studentId){ toast('Velg en elev først'); return; }
+  // Filter strictly by elevId — aldri hent en annen elevs øvelser
+  const prevSess=sessions
+    .filter(s=>s.elevId===practiceState.studentId && s.id!==practiceState.sessionId)
+    .sort((a,b)=>b.dato.localeCompare(a.dato))[0];
+  if(!prevSess){ toast('Ingen tidligere økt funnet'); return; }
+  const hasItems=CATS.some(cat=>practiceState.categories[cat].items.length>0);
+  if(hasItems && !confirm(`Hent øvelser fra ${fmtDate(prevSess.dato)}?\nDette erstatter det som allerede er planlagt.`)) return;
+  CATS.forEach(cat=>{
+    const planlagt=prevSess.kategorier?.[cat]?.planlagt||[];
+    practiceState.categories[cat].items=planlagt.map(i=>({...i,id:uid(),done:false,homework:false}));
+  });
+  toast('Kopiert fra '+fmtDate(prevSess.dato));
+  renderPractice();
+}
+function submitFreeText(cat){
+  const el=document.getElementById('ft-'+cat);
+  const text=(el?.value||'').trim();
+  if(text){ practiceState.categories[cat].items.push({id:uid(),type:'text',text,done:false,homework:false}); }
+  catFreeText[cat]=false;
+  renderPractice();
+}
+function toggleDone(cat,idx){ practiceState.categories[cat].items[idx].done=!practiceState.categories[cat].items[idx].done; renderPractice(); }
+function toggleHw(cat,idx){
+  const item=practiceState.categories[cat].items[idx];
+  if(!item.homework&&hwCount(cat)>=3){ toast('Maks 3 lekser per kategori'); return; }
+  item.homework=!item.homework; renderPractice();
+}
+function removeEx(cat,idx){ practiceState.categories[cat].items.splice(idx,1); renderPractice(); }
+function addNextPage(exId,cat){ practiceState.categories[cat].items.push({id:uid(),type:'db',exerciseId:exId,done:false,homework:false}); renderPractice(); }
+function saveSession(){
+  if(!practiceState.studentId){ toast('Velg en elev'); return; }
+  const kategorier={};
+  CATS.forEach(cat=>{
+    const items=practiceState.categories[cat].items;
+    kategorier[cat]={
+      planlagt:items.map(i=>({type:i.type,exerciseId:i.exerciseId,text:i.text})),
+      gjennomgått:items.filter(i=>i.done).map(i=>({type:i.type,exerciseId:i.exerciseId,text:i.text})),
+      lekse:items.filter(i=>i.homework).map(i=>({type:i.type,exerciseId:i.exerciseId,text:i.text}))
+    };
+  });
+  const sess={ id:practiceState.sessionId||uid(), elevId:practiceState.studentId, dato:practiceState.date, tid:practiceState.time, kategorier };
+  const idx=sessions.findIndex(s=>s.id===sess.id);
+  if(idx>=0) sessions[idx]=sess; else sessions.push(sess);
+  saveSessions();
+  toast('Økt lagret!');
+  // Stay in edit mode for the saved session so exercises remain visible
+  practiceState.sessionId=sess.id;
+  renderPractice();
+}
+function printHomework(){
+  if(!practiceState?.studentId){ toast('Velg en elev'); return; }
+  const st=getStudent(practiceState.studentId);
+  const hwCats=CATS.filter(cat=>practiceState.categories[cat].items.some(i=>i.homework));
+  if(!hwCats.length){ toast('Ingen lekser markert (★)'); return; }
+  const catRows=hwCats.map(cat=>{
+    const hw=practiceState.categories[cat].items.filter(i=>i.homework);
+    const rows=hw.map(item=>`<div class="pw-ex"><div class="pw-box"></div><div>${esc(exLabel(item))}</div></div>`).join('');
+    return `<div class="pw-cat">${CAT_LABELS[cat]}</div>${rows}`;
+  }).join('');
+  document.getElementById('print-view').innerHTML=`
+    <div class="pw-title">Lekse til ${esc(st?.navn||'')}</div>
+    <div class="pw-date">${fmtDate(practiceState.date)}</div>
+    ${catRows}
+    <div class="pw-footer">Kryss ut øvelsene du har gjort! 🎵</div>
+  `;
+  window.print();
+}
+
+// =====================================================================
+// SEARCH MODAL
+// =====================================================================
+function openSearchModal(cat){
+  searchTargetCat=cat;
+  document.getElementById('modal-search-title').textContent=`Legg til i ${CAT_LABELS[cat]}`;
+  document.getElementById('search-q').value='';
+  document.getElementById('search-cat').value=cat;
+  document.getElementById('search-lvl').value='';
+  document.getElementById('modal-search').classList.add('open');
+  renderSearchResults();
+  setTimeout(()=>document.getElementById('search-q').focus(),100);
+}
+function closeSearchModal(){ document.getElementById('modal-search').classList.remove('open'); }
+function renderSearchResults(){
+  const q=document.getElementById('search-q').value;
+  const cat=document.getElementById('search-cat').value;
+  const lvl=document.getElementById('search-lvl').value;
+  const results=filterExercises(q,cat,lvl,9999);
+  const el=document.getElementById('search-results');
+  if(!exercises.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📚</div><div>Ingen øvelser lastet inn ennå</div><div class="empty-msg">Importer Excel-filen under Innstillinger → Data</div></div>`;
+    return;
+  }
+  if(!results.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><div>Ingen treff</div></div>`;
+    return;
+  }
+  el.innerHTML=`<div class="results-count">${results.length} treff</div>`+
+    results.map(ex=>`<div class="sr-item" onclick="addFromSearch('${esc(ex.id)}')">
+      <div class="sr-title">${esc(ex.øvelse)}</div>
+      <div class="sr-meta">${esc(ex.bokKort||ex.bok)} · s.${esc(ex.side)} · Nivå ${esc(ex.nivå)} ${ex.fokus?'· '+esc(ex.fokus):''}</div>
+    </div>`).join('');
+}
+function addFromSearch(exId){
+  if(!searchTargetCat) return;
+  practiceState.categories[searchTargetCat].items.push({ id:uid(), type:'db', exerciseId:exId, done:false, homework:false });
+  catOpen[searchTargetCat]=true;
+  closeSearchModal();
+  renderPractice();
+  toast('Øvelse lagt til');
+}
+
+// =====================================================================
+// TEMPLATE MODAL
+// =====================================================================
+function openTplModal(){
+  document.getElementById('modal-tpl').classList.add('open');
+  const el=document.getElementById('tpl-list');
+  if(!templates.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div>Ingen maler ennå</div><div class="empty-msg">Opprett maler under Innstillinger → Maler</div></div>`;
+    return;
+  }
+  el.innerHTML=templates.map(t=>`<div class="list-row" onclick="applyTemplate('${esc(t.id)}')">
+    <div><div class="list-row-name">${esc(t.navn)}</div>
+    <div class="list-row-meta">${CATS.filter(c=>(t.kategorier[c]||[]).length>0).map(c=>`${CAT_LABELS[c]}: ${t.kategorier[c].length}`).join(' · ')}</div>
+    </div><div class="list-row-arrow">›</div></div>`).join('');
+}
+function closeTplModal(){ document.getElementById('modal-tpl').classList.remove('open'); }
+function applyTemplate(tplId){
+  const tpl=templates.find(t=>t.id===tplId);
+  if(!tpl) return;
+  CATS.forEach(cat=>{
+    const tplItems=(tpl.kategorier[cat]||[]);
+    tplItems.forEach(item=>{
+      practiceState.categories[cat].items.push({id:uid(),type:item.type,exerciseId:item.exerciseId,text:item.text,done:false,homework:false});
+    });
+    if(tplItems.length) catOpen[cat]=true;
+  });
+  closeTplModal();
+  renderPractice();
+  toast('Mal lastet inn');
+}
+
+// =====================================================================
+// HISTORY SCREEN
+// =====================================================================
+function renderHistory(){
+  const el=document.getElementById('screen-history');
+  const studOpts=students.map(s=>`<option value="${esc(s.id)}" ${s.id===histStudentId?'selected':''}>${esc(s.navn)}</option>`).join('');
+
+  let content='';
+  if(students.length===0){
+    content=`<div class="empty"><div class="empty-icon">👤</div><div>Ingen elever ennå</div></div>`;
+  } else {
+    if(!histStudentId && students.length) histStudentId=students[0].id;
+    const studSessions=sessions.filter(s=>s.elevId===histStudentId).sort((a,b)=>b.dato.localeCompare(a.dato));
+    if(!studSessions.length){
+      content=`<div class="empty"><div class="empty-icon">📖</div><div>Ingen økter for denne eleven ennå</div></div>`;
+    } else {
+      content=`<div class="card">`+studSessions.map(sess=>{
+        const isOpen=histOpenId===sess.id;
+        const totalPlan=CATS.reduce((n,c)=>(sess.kategorier[c]?.planlagt?.length||0)+n,0);
+        const totalDone=CATS.reduce((n,c)=>(sess.kategorier[c]?.gjennomgått?.length||0)+n,0);
+        const totalHw=CATS.reduce((n,c)=>(sess.kategorier[c]?.lekse?.length||0)+n,0);
+
+        let detail='';
+        if(isOpen){
+          const catDetails=CATS.map(cat=>{
+            const k=sess.kategorier[cat];
+            if(!k) return '';
+            const planRows=(k.planlagt||[]).map(i=>`<div class="sess-ex-line">${esc(exLabel(i))}</div>`).join('');
+            const doneRows=(k.gjennomgått||[]).map(i=>`<div class="sess-ex-line">${esc(exLabel(i))}</div>`).join('');
+            const hwRows=(k.lekse||[]).map(i=>`<div class="sess-ex-line">${esc(exLabel(i))}</div>`).join('');
+            if(!planRows&&!doneRows&&!hwRows) return '';
+            return `<div class="sess-cat-head">${CAT_ICONS[cat]} ${CAT_LABELS[cat]}</div>
+              ${planRows?`<div class="sess-sub">Planlagt</div>${planRows}`:''}
+              ${doneRows?`<div class="sess-sub">Gjennomgått</div>${doneRows}`:''}
+              ${hwRows?`<div class="sess-sub">Lekse</div>${hwRows}`:''}`;
+          }).join('');
+          detail=`<div class="sess-detail" style="border-top:1px solid var(--border)">${catDetails||'<div style="color:var(--text3);font-size:13px;padding:8px 0">Ingen innhold registrert</div>'}</div>`;
+        }
+
+        return `<div>
+          <div class="sess-item" style="display:flex;align-items:center;gap:6px" onclick="histOpenId=histOpenId==='${sess.id}'?null:'${sess.id}';renderHistory()">
+            <div style="flex:1;min-width:0">
+              <div class="sess-date">${fmtDate(sess.dato)}${sess.tid?` · ${esc(sess.tid)}`:''}</div>
+              <div class="sess-meta">Planlagt: ${totalPlan} · Gjennomgått: ${totalDone}${totalHw?' · 📌 '+totalHw+' lekser':''}</div>
+            </div>
+            <button class="ex-del" style="flex-shrink:0" onclick="event.stopPropagation();deleteSession('${esc(sess.id)}')" title="Slett økt">🗑</button>
+          </div>
+          ${detail}
+        </div>`;
+      }).join('')+`</div>`;
+    }
+  }
+
+  el.innerHTML=`
+    <div class="s-head"><div class="s-title">Historikk</div></div>
+    ${students.length?`<div style="margin-bottom:14px"><select onchange="histStudentId=this.value;histOpenId=null;renderHistory()">${studOpts}</select></div>`:''}
+    ${content}
+  `;
+}
+
+function deleteSession(id){
+  if(!confirm('Slette denne økten?')) return;
+  sessions=sessions.filter(s=>s.id!==id);
+  if(histOpenId===id) histOpenId=null;
+  saveSessions();
+  renderHistory();
+}
+
+// =====================================================================
+// BOOKS SCREEN
+// =====================================================================
+let booksOpenGroups=new Set();
+
+function toggleBookGroup(key){
+  if(booksOpenGroups.has(key)) booksOpenGroups.delete(key);
+  else booksOpenGroups.add(key);
+  renderBooks();
+}
+
+function renderBooks(){
+  const el=document.getElementById('screen-books');
+  const isFiltering=!!(booksQ||booksCat||booksLvl);
+  const results=filterExercises(booksQ,booksCat,booksLvl,2000);
+
+  const levelChips=[1,2,3,4,5].map(l=>`<div class="filter-chip${booksLvl==l?' on':''}" onclick="booksLvl=booksLvl=='${l}'?'':'${l}';renderBooks()">Nivå ${l}</div>`).join('');
+  const catChips=CATS.map(c=>`<div class="filter-chip${booksCat===c?' on':''}" onclick="booksCat=booksCat==='${c}'?'':'${c}';renderBooks()">${CAT_LABELS[c]}</div>`).join('');
+
+  const addFormHtml=booksAddOpen?`
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><h3 style="font-size:15px">Ny øvelse</h3><button class="btn btn-ghost btn-sm" onclick="booksAddOpen=false;renderBooks()">✕</button></div>
+      <div class="card-body" style="display:block;padding:12px 16px">
+        <div class="form-group" style="margin-bottom:10px"><label>Bok</label><input id="nex-bok" type="text" placeholder="Bokenavn"></div>
+        <div class="form-row" style="padding:0;margin-bottom:10px">
+          <div class="form-group"><label>Forkortelse</label><input id="nex-kort" type="text" placeholder="BK"></div>
+          <div class="form-group"><label>Forfatter</label><input id="nex-forfatter" type="text"></div>
+        </div>
+        <div class="form-row" style="padding:0;margin-bottom:10px">
+          <div class="form-group"><label>Kategori</label><select id="nex-cat"><option value="TEK">Teknikk</option><option value="SD">Skarptromme</option><option value="Timp">Timpani</option><option value="Melodisk">Melodisk</option><option value="Kit">Trommesett</option></select></div>
+          <div class="form-group"><label>Nivå (1–5)</label><input id="nex-nivå" type="number" min="1" max="5" value="1"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px"><label>Øvelse</label><input id="nex-øvelse" type="text" placeholder="Navn på øvelse"></div>
+        <div class="form-row" style="padding:0;margin-bottom:14px">
+          <div class="form-group"><label>Side</label><input id="nex-side" type="number" min="1"></div>
+          <div class="form-group"><label>Fokus</label><input id="nex-fokus" type="text"></div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="addExercise()">Legg til øvelse</button>
+      </div>
+    </div>`:'';
+
+  let listHtml='';
+  if(!exercises.length){
+    listHtml=`<div class="empty"><div class="empty-icon">📚</div><div>Ingen øvelser lastet inn</div><div class="empty-msg">Importer Excel under Innstillinger → Data</div></div>`;
+  } else if(!results.length){
+    listHtml=`<div class="empty"><div class="empty-icon">🔍</div><div>Ingen treff</div></div>`;
+  } else {
+    // Group by book, sort exercises by page within each book
+    const groups={};
+    results.forEach(ex=>{
+      const key=ex.bok||'Ukjent bok';
+      if(!groups[key]) groups[key]={bok:ex.bok,bokKort:ex.bokKort,forfatter:ex.forfatter,items:[]};
+      groups[key].items.push(ex);
+    });
+    const sortedGroups=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b,'no'));
+
+    const countLabel=`<div class="results-count">${results.length} øvelser i ${sortedGroups.length} bøker${isFiltering?' (filtrert)':''}</div>`;
+
+    const groupsHtml=sortedGroups.map(([key,group])=>{
+      const isOpen=isFiltering||booksOpenGroups.has(key);
+      const items=[...group.items].sort((a,b)=>(a.side||0)-(b.side||0));
+
+      const itemRows=items.map(ex=>`
+        <div class="book-item" onclick="openEditExercise('${esc(ex.id)}')">
+          <div class="book-item-main">
+            <div class="book-tags">
+              <span class="tag-page">s.${ex.side||'?'}</span>
+              <span class="tag-lvl">N${ex.nivå||'?'}</span>
+              <span class="tag-cat">${CAT_LABELS[ex.kategori]||esc(ex.kategori)}</span>
+            </div>
+            <div class="book-ex-name">${esc(ex.øvelse)}</div>
+            ${ex.fokus?`<div class="book-focus">${esc(ex.fokus)}</div>`:''}
+          </div>
+          <div style="color:var(--text3);font-size:14px;flex-shrink:0;align-self:center">›</div>
+        </div>`).join('');
+
+      const title=group.bokKort&&group.bokKort!==group.bok
+        ?`<span style="color:var(--accent)">${esc(group.bokKort)}</span> — ${esc(group.bok)}`
+        :esc(group.bok||'Ukjent bok');
+
+      return `<div class="card" style="margin-bottom:8px">
+        <div class="book-group-head" onclick="toggleBookGroup('${esc(key)}')">
+          <div class="book-group-title">
+            <div class="book-group-name">${title}</div>
+            ${group.forfatter?`<div class="book-group-author">${esc(group.forfatter)}</div>`:''}
+          </div>
+          <span class="cat-badge active" style="margin-right:8px">${items.length}</span>
+          <svg class="cat-chevron${isOpen?' open':''}" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        ${isOpen?`<div style="border-top:1px solid var(--border)">${itemRows}</div>`:''}
+      </div>`;
+    }).join('');
+
+    listHtml=countLabel+groupsHtml;
+  }
+
+  el.innerHTML=`
+    <div class="s-head">
+      <div class="s-title">Bøker</div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn btn-ghost btn-sm" onclick="exportBooksCSV()" title="Eksporter bokdatabase som CSV">⬇ CSV</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('input-books-csv').value='';document.getElementById('input-books-csv').click()" title="Importer bokdatabase fra CSV">⬆ CSV</button>
+        <button class="btn btn-primary btn-sm" onclick="booksAddOpen=!booksAddOpen;renderBooks()">＋ Øvelse</button>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5">
+      Vil du redigere mange øvelser? Eksporter som CSV → rediger i Excel → importer CSV.
+    </div>
+    <input id="books-search-input" type="text" placeholder="Søk øvelse, bok, fokus…" value="${esc(booksQ)}" oninput="booksQ=this.value;booksKeepFocus=true;renderBooks()" style="margin-bottom:10px">
+    <div class="filter-row">${catChips}</div>
+    <div class="filter-row" style="margin-bottom:10px">${levelChips}</div>
+    ${addFormHtml}
+    ${listHtml}
+  `;
+  if(booksKeepFocus){
+    booksKeepFocus=false;
+    setTimeout(()=>{ const el=document.getElementById('books-search-input'); if(el){ el.focus(); el.setSelectionRange(el.value.length,el.value.length); } },0);
+  }
+}
+function addExercise(){
+  const bok=document.getElementById('nex-bok').value.trim();
+  const øvelse=document.getElementById('nex-øvelse').value.trim();
+  if(!bok||!øvelse){ toast('Fyll ut bok og øvelse'); return; }
+  const ex={
+    id: uid(),
+    bok, bokKort:document.getElementById('nex-kort').value.trim(),
+    forfatter:document.getElementById('nex-forfatter').value.trim(),
+    kategori:document.getElementById('nex-cat').value,
+    øvelse, side:parseInt(document.getElementById('nex-side').value)||0,
+    nivå:parseInt(document.getElementById('nex-nivå').value)||1,
+    fokus:document.getElementById('nex-fokus').value.trim()
+  };
+  exercises.push(ex);
+  saveExercises();
+  booksAddOpen=false;
+  toast('Øvelse lagt til');
+  renderBooks();
+}
+
+// =====================================================================
+// EDIT EXERCISE MODAL
+// =====================================================================
+function openEditExercise(id){
+  const ex=getExercise(id);
+  if(!ex) return;
+  const catOpts=CATS.map(c=>`<option value="${c}" ${ex.kategori===c?'selected':''}>${CAT_LABELS[c]}</option>`).join('');
+  document.getElementById('modal-ex-edit-body').innerHTML=`
+    <div class="form-group" style="margin-bottom:10px"><label>Øvelse</label><input id="eex-øvelse" type="text" value="${esc(ex.øvelse)}"></div>
+    <div class="form-row" style="padding:0;margin-bottom:10px">
+      <div class="form-group"><label>Bok</label><input id="eex-bok" type="text" value="${esc(ex.bok)}"></div>
+      <div class="form-group"><label>Forkortelse</label><input id="eex-kort" type="text" value="${esc(ex.bokKort)}"></div>
+    </div>
+    <div class="form-row" style="padding:0;margin-bottom:10px">
+      <div class="form-group"><label>Forfatter</label><input id="eex-forfatter" type="text" value="${esc(ex.forfatter)}"></div>
+      <div class="form-group"><label>Kategori</label><select id="eex-cat">${catOpts}</select></div>
+    </div>
+    <div class="form-row" style="padding:0;margin-bottom:10px">
+      <div class="form-group"><label>Side</label><input id="eex-side" type="number" min="0" value="${esc(ex.side)}"></div>
+      <div class="form-group"><label>Nivå (1–5)</label><input id="eex-nivå" type="number" min="1" max="5" value="${esc(ex.nivå)}"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px"><label>Fokus</label><input id="eex-fokus" type="text" value="${esc(ex.fokus)}"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveEditExercise('${esc(id)}')">Lagre</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteExercise('${esc(id)}')">Slett</button>
+    </div>
+  `;
+  document.getElementById('modal-ex-edit').classList.add('open');
+  setTimeout(()=>document.getElementById('eex-øvelse')?.focus(),100);
+}
+function closeEditExercise(){ document.getElementById('modal-ex-edit').classList.remove('open'); }
+function saveEditExercise(id){
+  const ex=getExercise(id);
+  if(!ex) return;
+  const øvelse=document.getElementById('eex-øvelse').value.trim();
+  if(!øvelse){ toast('Øvelse kan ikke være tom'); return; }
+  ex.øvelse    = øvelse;
+  ex.bok       = document.getElementById('eex-bok').value.trim();
+  ex.bokKort   = document.getElementById('eex-kort').value.trim();
+  ex.forfatter = document.getElementById('eex-forfatter').value.trim();
+  ex.kategori  = document.getElementById('eex-cat').value;
+  ex.side      = parseInt(document.getElementById('eex-side').value)||0;
+  ex.nivå      = parseInt(document.getElementById('eex-nivå').value)||1;
+  ex.fokus     = document.getElementById('eex-fokus').value.trim();
+  saveExercises();
+  toast('Øvelse oppdatert');
+  closeEditExercise();
+  renderBooks();
+}
+function deleteExercise(id){
+  if(!confirm('Slette denne øvelsen?')) return;
+  exercises=exercises.filter(e=>e.id!==id);
+  saveExercises();
+  toast('Øvelse slettet');
+  closeEditExercise();
+  renderBooks();
+}
+
+// =====================================================================
+// SETTINGS SCREEN
+// =====================================================================
+function renderSettings(){
+  const el=document.getElementById('screen-settings');
+  const studList=students.length?`<div class="card">`+students.map(s=>{
+    const isAktiv=s.aktiv!==false;
+    const schedule=s.defaultDag||s.defaultTid ? `${s.defaultDag||''} ${s.defaultTid||''}`.trim() : null;
+    return `<div class="list-row" onclick="openStudentModal('${esc(s.id)}')" style="${isAktiv?'':'opacity:0.5'}">
+      <div><div class="list-row-name">${esc(s.navn)}${!isAktiv?' <span style="font-size:11px;color:var(--text3);font-weight:400">(inaktiv)</span>':''}</div>
+      <div class="list-row-meta">${schedule?esc(schedule)+' · ':''}TEK${s.nivå?.TEK||1} SD${s.nivå?.SD||1} Timp${s.nivå?.Timp||1} Mel${s.nivå?.Melodisk||1} Kit${s.nivå?.Kit||1}</div></div>
+      <div class="list-row-arrow">›</div></div>`;
+  }).join('')+`</div>`:`<div class="card"><div style="padding:16px;color:var(--text3);font-size:14px">Ingen elever ennå</div></div>`;
+
+  const tplList=templates.length?`<div class="card">`+templates.map(t=>`<div class="list-row" onclick="openTplEditModal('${esc(t.id)}')">
+    <div><div class="list-row-name">${esc(t.navn)}</div>
+    <div class="list-row-meta">${CATS.filter(c=>(t.kategorier[c]||[]).length>0).map(c=>`${CAT_LABELS[c]}: ${t.kategorier[c].length}`).join(' · ')||'Tom'}</div></div>
+    <div class="list-row-arrow">›</div></div>`).join('')+`</div>`:`<div class="card"><div style="padding:16px;color:var(--text3);font-size:14px">Ingen maler ennå</div></div>`;
+
+  const stats=`${students.length} elever · ${exercises.length} øvelser · ${sessions.length} økter · ${templates.length} maler`;
+
+  el.innerHTML=`
+    <div class="s-head"><div class="s-title">Innstillinger</div></div>
+    <div class="settings-block">
+      <div class="s-block-title">Elever</div>
+      ${studList}
+      <button class="btn btn-secondary btn-full" style="margin-top:8px" onclick="openStudentModal(null)">＋ Legg til elev</button>
+    </div>
+    <div class="settings-block">
+      <div class="s-block-title">Maler</div>
+      ${tplList}
+      <button class="btn btn-secondary btn-full" style="margin-top:8px" onclick="openTplEditModal(null)">＋ Ny mal</button>
+    </div>
+    <div class="settings-block">
+      <div class="s-block-title">Microsoft OneDrive (mobil/alle enheter)</div>
+      <div class="card">
+        <div style="padding:14px 16px">
+          ${graphAccount()
+            ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;flex-shrink:0"></span>
+                <span style="font-size:13px">Innlogget: <strong>${esc(graphAccount().username||graphAccount().name||'Microsoft-konto')}</strong></span>
+               </div>
+               <button class="btn btn-secondary btn-full btn-sm" onclick="loadFromGraph()">🔄 Last inn fra OneDrive</button>
+               <button class="btn btn-ghost btn-full btn-sm" style="margin-top:6px" onclick="signOutMicrosoft()">Logg ut</button>`
+            : `<div style="font-size:13px;color:var(--text2);margin-bottom:12px">
+                Logg inn med Microsoft-kontoen din for å lese og skrive data direkte til OneDrive. Fungerer på iPhone og alle nettlesere.
+               </div>
+               <div class="form-group" style="margin-bottom:10px">
+                 <label style="font-size:12px">Azure Application (client) ID</label>
+                 <input id="graph-client-id-input" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                   value="${esc(graphClientId())}"
+                   style="font-family:monospace;font-size:12px"
+                   oninput="saveGraphClientId(this.value);initMsal()">
+               </div>
+               <button class="btn btn-primary btn-full" onclick="signInMicrosoft()">
+                 <svg width="16" height="16" viewBox="0 0 21 21" style="flex-shrink:0"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                 Logg inn med Microsoft
+               </button>`
+          }
+        </div>
+        <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">
+          Data lagres som <strong>Slagverk/slagverk_data.json</strong> i OneDrive. Appen oppdager endringer automatisk.
+        </div>
+      </div>
+    </div>
+    <div class="settings-block">
+      <div class="s-block-title">OneDrive-synk (PC — Chrome/Edge)</div>
+      <div class="card">
+        <div style="padding:14px 16px">
+          ${fileHandle
+            ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;flex-shrink:0"></span>
+                <span style="font-size:13px">Tilkoblet: <strong>${esc(fileHandle.name)}</strong></span>
+               </div>
+               <button class="btn btn-secondary btn-full btn-sm" onclick="saveToFile().then(()=>toast('Lagret til fil'))">💾 Lagre til fil nå</button>
+               <button class="btn btn-ghost btn-full btn-sm" style="margin-top:6px" onclick="disconnectDataFile()">Koble fra</button>`
+            : _pendingHandle
+              ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                  <span style="font-size:18px">⚠️</span>
+                  <span style="font-size:13px;color:var(--text2)">Datafilen er husket, men trenger tillatelse på nytt.</span>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="reconnectPending()">🔓 Gi tilgang igjen</button>`
+              : `<div style="font-size:13px;color:var(--text2);margin-bottom:12px">
+                  Ingen datafil tilkoblet. Data lagres kun lokalt i nettleseren.
+                </div>
+                ${fsaSupported
+                  ? `<div style="display:flex;gap:8px">
+                      <button class="btn btn-secondary btn-sm" style="flex:1" onclick="connectDataFile()">📂 Åpne datafil</button>
+                      <button class="btn btn-ghost btn-sm" style="flex:1" onclick="createNewDataFile()">＋ Ny datafil</button>
+                    </div>`
+                  : `<div style="font-size:12px;padding:10px;background:var(--surface2);border-radius:8px;color:var(--text2)">
+                      ⚠ Direkte filsynk krever Chrome eller Edge.
+                    </div>`
+                }`
+          }
+        </div>
+        <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">
+          Lagre <strong>slagverk_app.html</strong> og <strong>slagverk_data.json</strong> i samme OneDrive-mappe for synk mellom enheter.
+        </div>
+      </div>
+    </div>
+    <div class="settings-block">
+      <div class="s-block-title">Data</div>
+      <div class="card">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+          <div style="font-size:13px;color:var(--text2);margin-bottom:12px">${stats}</div>
+          <button class="btn btn-secondary btn-full" style="margin-bottom:10px;justify-content:flex-start;gap:10px" onclick="document.getElementById('input-excel').value='';document.getElementById('input-excel').click()">
+            📥 Importer fra Excel (.xlsx)
+          </button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" style="flex:1" onclick="exportJSON()">⬇ Eksporter JSON</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1" onclick="document.getElementById('input-json').value='';document.getElementById('input-json').click()">⬆ Importer JSON</button>
+          </div>
+        </div>
+        <div style="padding:12px 16px">
+          <button class="btn btn-danger btn-full btn-sm" onclick="clearAllData()">⚠ Slett alle data</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+}
+
+// =====================================================================
+// STUDENT MODAL
+// =====================================================================
+function openStudentModal(id){
+  settingsEditStudentId=id;
+  const st=id?getStudent(id):null;
+  document.getElementById('modal-student-title').textContent=id?esc(st?.navn||'Elev'):'Ny elev';
+  const lvls=st?.nivå||{TEK:1,SD:1,Timp:1,Melodisk:1,Kit:1};
+  const catRows=CATS.map(cat=>{
+    const cur=lvls[cat]||1;
+    const pills=[1,2,3,4,5].map(l=>`<button class="lvl-btn${cur==l?' on':''}" onclick="setStudentLevel('${cat}',${l},this)">${l}</button>`).join('');
+    return `<div style="margin-bottom:12px"><label>${CAT_LABELS[cat]}</label><div class="level-row" style="margin-top:6px">${pills}</div></div>`;
+  }).join('');
+  settingsEditAktiv=st?.aktiv!==false;
+  const dagOpts=['','mandag','tirsdag','onsdag','torsdag','fredag','lørdag','søndag']
+    .map(d=>`<option value="${d}" ${(st?.defaultDag||'')===(d)?'selected':''}>${d||'— ingen standard —'}</option>`).join('');
+  document.getElementById('modal-student-body').innerHTML=`
+    <div class="form-group" style="margin-bottom:12px"><label>Navn</label><input id="st-navn" type="text" value="${esc(st?.navn||'')}" placeholder="Elevens navn"></div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:14px">
+      <div>
+        <div style="font-weight:500">Aktiv elev</div>
+        <div style="font-size:12px;color:var(--text2)">Inaktive elever vises ikke i Øving</div>
+      </div>
+      <button id="st-aktiv-btn" onclick="toggleAktivBtn()" type="button"
+        style="position:relative;width:44px;height:26px;cursor:pointer;flex-shrink:0;border:none;padding:0;background:${settingsEditAktiv?'var(--green)':'var(--surface3)'};border-radius:13px;transition:background 0.2s">
+        <span id="st-aktiv-thumb" style="position:absolute;top:3px;left:${settingsEditAktiv?'21px':'3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:left 0.2s"></span>
+      </button>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Standard øvingstidspunkt</div>
+      <div style="display:flex;gap:10px">
+        <div class="form-group"><label>Dag</label><select id="st-dag">${dagOpts}</select></div>
+        <div class="form-group"><label>Tid</label><input id="st-tid" type="text" placeholder="16:55-17:20" value="${esc(st?.defaultTid||'')}"></div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Nivå per kategori</div>
+    ${catRows}
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveStudent()">Lagre</button>
+      ${id?`<button class="btn btn-danger btn-sm" onclick="deleteStudent('${esc(id)}')">Slett</button>`:''}
+    </div>
+  `;
+  document.getElementById('modal-student').classList.add('open');
+  setTimeout(()=>document.getElementById('st-navn').focus(),100);
+}
+function closeStudentModal(){ document.getElementById('modal-student').classList.remove('open'); renderSettings(); }
+function toggleAktivBtn(){
+  settingsEditAktiv=!settingsEditAktiv;
+  const btn=document.getElementById('st-aktiv-btn');
+  const thumb=document.getElementById('st-aktiv-thumb');
+  if(btn) btn.style.background=settingsEditAktiv?'var(--green)':'var(--surface3)';
+  if(thumb) thumb.style.left=settingsEditAktiv?'21px':'3px';
+}
+function setStudentLevel(cat,lvl,btn){
+  btn.closest('.level-row').querySelectorAll('.lvl-btn').forEach((b,i)=>b.classList.toggle('on',i+1===lvl));
+  btn.dataset.cat=cat; btn.dataset.lvl=lvl;
+}
+function saveStudent(){
+  const navn=document.getElementById('st-navn').value.trim();
+  if(!navn){ toast('Skriv inn navn'); return; }
+  const modal=document.getElementById('modal-student-body');
+  const nivå={};
+  CATS.forEach(cat=>{
+    const onBtn=modal.querySelector(`.level-row .lvl-btn.on:is([data-cat="${cat}"])`);
+    // fallback: find by position
+    const row=modal.querySelectorAll('.level-row');
+    const catIdx=CATS.indexOf(cat);
+    if(row[catIdx]){ const on=row[catIdx].querySelector('.lvl-btn.on'); nivå[cat]=on?parseInt(on.textContent):1; }
+    else nivå[cat]=1;
+  });
+  const aktiv=settingsEditAktiv;
+  const defaultDag=document.getElementById('st-dag')?.value||'';
+  const defaultTid=document.getElementById('st-tid')?.value.trim()||'';
+  if(settingsEditStudentId){
+    const st=getStudent(settingsEditStudentId);
+    if(st){ st.navn=navn; st.nivå=nivå; st.aktiv=aktiv; st.defaultDag=defaultDag; st.defaultTid=defaultTid; }
+  } else {
+    students.push({id:uid(),navn,nivå,aktiv,defaultDag,defaultTid});
+    if(!practiceState) practiceState=newPracticeState();
+    if(!practiceState.studentId) practiceState.studentId=students[students.length-1].id;
+  }
+  saveStudents();
+  toast('Lagret');
+  closeStudentModal();
+}
+function deleteStudent(id){
+  if(!confirm('Slette elev? Historikk beholdes.')) return;
+  students=students.filter(s=>s.id!==id);
+  saveStudents();
+  closeStudentModal();
+}
+
+// =====================================================================
+// TEMPLATE EDIT MODAL
+// =====================================================================
+function openTplEditModal(id){
+  settingsEditTplId=id;
+  const tpl=id?templates.find(t=>t.id===id):null;
+  document.getElementById('modal-tpl-edit-title').textContent=tpl?esc(tpl.navn):'Ny mal';
+  const cats=tpl?tpl.kategorier:initCats();
+  const catRows=CATS.map(cat=>{
+    const items=(cats[cat]||[]);
+    const rows=items.map((item,idx)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1;font-size:14px">${esc(exLabel(item))}</div>
+      <button class="ex-del" onclick="removeTplItem('${cat}',${idx})">×</button>
+    </div>`).join('');
+    return `<div style="margin-bottom:14px">
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px">${CAT_ICONS[cat]} ${CAT_LABELS[cat]}</div>
+      ${rows}
+      <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="addTplFreeText('${cat}')">＋ Fritekst</button>
+    </div>`;
+  }).join('');
+  document.getElementById('modal-tpl-edit-body').innerHTML=`
+    <div class="form-group" style="margin-bottom:16px"><label>Malnavn</label><input id="tpl-navn" type="text" value="${esc(tpl?.navn||'')}" placeholder="Navn på mal"></div>
+    <div id="tpl-cat-rows">${catRows}</div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveTemplate()">Lagre mal</button>
+      ${id?`<button class="btn btn-danger btn-sm" onclick="deleteTemplate('${esc(id)}')">Slett</button>`:''}
+    </div>
+  `;
+  document.getElementById('modal-tpl-edit').classList.add('open');
+}
+function closeTplEditModal(){ document.getElementById('modal-tpl-edit').classList.remove('open'); renderSettings(); }
+let _tplEditCats=null;
+function getTplEditCats(){
+  // rebuild from DOM is complex — store in memory
+  if(!_tplEditCats){
+    const id=settingsEditTplId;
+    const tpl=id?templates.find(t=>t.id===id):null;
+    _tplEditCats=tpl?JSON.parse(JSON.stringify(tpl.kategorier)):initCats();
+  }
+  return _tplEditCats;
+}
+function addTplFreeText(cat){
+  const text=prompt(`Fritekst øvelse for ${CAT_LABELS[cat]}:`);
+  if(!text?.trim()) return;
+  const cats=getTplEditCats();
+  if(!cats[cat]) cats[cat]=[];
+  cats[cat].push({type:'text',text:text.trim()});
+  refreshTplEditModal();
+}
+function removeTplItem(cat,idx){
+  const cats=getTplEditCats();
+  cats[cat].splice(idx,1);
+  refreshTplEditModal();
+}
+function refreshTplEditModal(){
+  const cats=getTplEditCats();
+  const catRows=CATS.map(cat=>{
+    const items=(cats[cat]||[]);
+    const rows=items.map((item,idx)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1;font-size:14px">${esc(exLabel(item))}</div>
+      <button class="ex-del" onclick="removeTplItem('${cat}',${idx})">×</button>
+    </div>`).join('');
+    return `<div style="margin-bottom:14px">
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px">${CAT_ICONS[cat]} ${CAT_LABELS[cat]}</div>
+      ${rows}
+      <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="addTplFreeText('${cat}')">＋ Fritekst</button>
+    </div>`;
+  }).join('');
+  document.getElementById('tpl-cat-rows').innerHTML=catRows;
+}
+function saveTemplate(){
+  const navn=document.getElementById('tpl-navn').value.trim();
+  if(!navn){ toast('Skriv inn malnavn'); return; }
+  const kategorier=getTplEditCats()||initCats();
+  if(settingsEditTplId){
+    const tpl=templates.find(t=>t.id===settingsEditTplId);
+    if(tpl){ tpl.navn=navn; tpl.kategorier=kategorier; }
+  } else {
+    templates.push({id:uid(),navn,kategorier});
+  }
+  saveTemplates();
+  _tplEditCats=null;
+  toast('Mal lagret');
+  closeTplEditModal();
+}
+function deleteTemplate(id){
+  if(!confirm('Slette mal?')) return;
+  templates=templates.filter(t=>t.id!==id);
+  saveTemplates();
+  _tplEditCats=null;
+  closeTplEditModal();
+}
+
+// =====================================================================
+// EXCEL IMPORT
+// =====================================================================
+
+// Normalize Norwegian sheet names for matching (ø→o, æ→ae, å→a)
+function normName(n){ return n.toLowerCase().replace(/ø/g,'o').replace(/æ/g,'ae').replace(/å/g,'a').trim(); }
+function findSheet(wb, patterns){
+  return wb.SheetNames.find(n => patterns.some(p => p.test(normName(n))));
+}
+
+function importExcel(input){
+  const file=input.files[0];
+  if(!file) return;
+  toast('Leser fil…');
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const allSheets=wb.SheetNames;
+      console.log('Ark i filen:', allSheets);
+      let imported={students:0,exercises:0,sessions:0};
+
+      // --- ELEVER / HJELPER SHEET ---
+      const hjSheet=findSheet(wb,[/hjelper/,/^elev/,/student/]);
+      if(hjSheet){
+        // Try as object first (with headers), fall back to raw array
+        const objRows=XLSX.utils.sheet_to_json(wb.Sheets[hjSheet]);
+        const arrRows=XLSX.utils.sheet_to_json(wb.Sheets[hjSheet],{header:1});
+        let navnListe=[];
+        if(objRows.length){
+          // Find the column that looks like student names
+          const keys=Object.keys(objRows[0]||{});
+          const nameKey=keys.find(k=>/elev|navn|name|student/i.test(k))||keys[0];
+          navnListe=objRows.map(r=>String(r[nameKey]||'').trim()).filter(Boolean);
+        } else {
+          navnListe=arrRows.map(r=>String(r[0]||'').trim()).filter(Boolean);
+        }
+        navnListe.forEach(navn=>{
+          const skip=['elev','navn','name','student','#'];
+          if(skip.some(s=>navn.toLowerCase()===s)) return;
+          if(!students.find(s=>s.navn===navn)){
+            students.push({id:uid(),navn,nivå:{TEK:1,SD:1,Timp:1,Melodisk:1,Kit:1}});
+            imported.students++;
+          }
+        });
+        saveStudents();
+      }
+
+      // --- ØVELSER / BØKER SHEET ---
+      // Note: normName converts "Bøker" → "boker" so /bok/ matches correctly
+      const bokSheet=findSheet(wb,[/bok/,/ovelse/,/exercise/,/book/]);
+      if(bokSheet){
+        const rows=XLSX.utils.sheet_to_json(wb.Sheets[bokSheet]);
+        if(rows.length) console.log('Bøker kolonner:', Object.keys(rows[0]));
+        const catMap={
+          'SD':'SD','Skarptromme':'SD','Snare':'SD','Snaredrum':'SD',
+          'Tuned':'Melodisk','Melodisk':'Melodisk','Marimba':'Melodisk','Xylophone':'Melodisk',
+          'Timp':'Timp','Timpani':'Timp',
+          'Kit':'Kit','Trommesett':'Kit','Drumset':'Kit',
+          'TEK':'TEK','Teknikk':'TEK','Tech':'TEK'
+        };
+        rows.forEach(row=>{
+          // Accept any non-empty exercise name
+          const øvelse=String(
+            row.Exercise||row.Øvelse||row.exercise||row.øvelse||
+            row.Name||row.name||row.Navn||row.navn||''
+          ).trim();
+          if(!øvelse) return;
+          const rawCat=String(row.Category||row.Kategori||row.category||row.kategori||'').trim();
+          const kategori=catMap[rawCat]||'SD';
+          const exId=String(row.Short||row.ID||row.id||row.short||'').trim()||uid();
+          // Avoid duplicates on re-import
+          if(exercises.find(ex=>ex.id===exId)) return;
+          exercises.push({
+            id: exId,
+            bok:     String(row.Book||row.Bok||row.book||row.bok||'').trim(),
+            bokKort: String(row['Book short']||row['Book Short']||row.BokKort||row.Short||row.short||'').trim(),
+            forfatter: String(row.Author||row.Forfatter||row.author||'').trim(),
+            kategori,
+            øvelse,
+            side:  parseInt(row.Page||row.Side||row.page||row.side||0)||0,
+            nivå:  parseInt(row.Level||row.Nivå||row.level||row.nivå||1)||1,
+            fokus: String(row['Øvelsens fokus']||row.Fokus||row.fokus||row.Focus||row.focus||'').trim()
+          });
+          imported.exercises++;
+        });
+        saveExercises();
+      }
+
+      // --- HISTORIKK / DATA SHEET ---
+      const dataSheet=findSheet(wb,[/^data$/,/historikk/,/^okt/,/session/,/logg/]);
+      if(dataSheet){
+        const rows=XLSX.utils.sheet_to_json(wb.Sheets[dataSheet]);
+        if(rows.length) console.log('Data kolonner:', Object.keys(rows[0]));
+        rows.forEach(row=>{
+          const elevNavn=String(row.Elev||row.elev||row.Student||row.student||'').trim();
+          const elev=students.find(s=>s.navn===elevNavn);
+          if(!elev) return;
+          const datoRaw=row.Dato||row.dato||row.Date||row.date||'';
+          let dato='';
+          if(datoRaw){
+            try{
+              // Handle Excel serial date numbers
+              if(typeof datoRaw==='number'){
+                const d=XLSX.SSF.parse_date_code(datoRaw);
+                dato=`${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+              } else {
+                const d=new Date(datoRaw);
+                if(!isNaN(d)) dato=d.toISOString().slice(0,10);
+              }
+            }catch{}
+          }
+          const kategorier={};
+          CATS.forEach(cat=>{
+            // Try both short key (TEK) and long label (Teknikk)
+            const planText=String(row[cat]||row[CAT_LABELS[cat]]||'').trim();
+            const planlagt=planText?[{type:'text',text:planText}]:[];
+            const lekse=[];
+            for(let i=1;i<=3;i++){
+              const hw=String(row[cat+i]||row[CAT_LABELS[cat]+i]||'').trim();
+              if(hw) lekse.push({type:'text',text:hw});
+            }
+            kategorier[cat]={planlagt,gjennomgått:[],lekse};
+          });
+          sessions.push({id:uid(),elevId:elev.id,dato,tid:String(row.Tid||row.tid||'').trim(),kategorier});
+          imported.sessions++;
+        });
+        saveSessions();
+      }
+
+      // Build result message
+      const parts=[];
+      if(hjSheet)   parts.push(`${imported.students} elever (ark: "${hjSheet}")`);
+      else          parts.push(`⚠ Ingen elevark funnet`);
+      if(bokSheet)  parts.push(`${imported.exercises} øvelser (ark: "${bokSheet}")`);
+      else          parts.push(`⚠ Ingen øvelsesark funnet`);
+      if(dataSheet) parts.push(`${imported.sessions} økter (ark: "${dataSheet}")`);
+      else          parts.push(`⚠ Ingen dataark funnet`);
+
+      const noneFound=!hjSheet&&!bokSheet&&!dataSheet;
+      if(noneFound){
+        alert(`Fant ingen kjente ark.\n\nArk i filen: ${allSheets.join(', ')}\n\nForventet: "Hjelper", "Bøker", "Data"\n\nSi fra hvilke navn som brukes!`);
+      } else {
+        alert('Import ferdig:\n\n'+parts.join('\n'));
+        renderSettings();
+        if(!practiceState) practiceState=newPracticeState();
+        else if(!practiceState.studentId&&students.length) practiceState.studentId=students[0].id;
+      }
+      input.value='';
+    } catch(err){
+      console.error(err);
+      alert('Feil ved import:\n'+err.message);
+      input.value='';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// =====================================================================
+// JSON EXPORT / IMPORT
+// =====================================================================
+function exportJSON(){
+  const data={students,exercises,sessions,templates,exportedAt:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='slagverk_backup_'+todayStr()+'.json';
+  a.click();
+  toast('Backup lastet ned');
+}
+function importJSON(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.students) { students=data.students; saveStudents(); }
+      if(data.exercises) { exercises=data.exercises; saveExercises(); }
+      if(data.sessions) { sessions=data.sessions; saveSessions(); }
+      if(data.templates) { templates=data.templates; saveTemplates(); }
+      toast('Backup gjenopprettet');
+      renderSettings();
+      input.value='';
+    } catch(err){ toast('Feil: '+err.message); input.value=''; }
+  };
+  reader.readAsText(file);
+}
+function clearAllData(){
+  if(!confirm('Slette ALL data? Dette kan ikke angres!')) return;
+  students=[]; exercises=[]; sessions=[]; templates=[];
+  saveStudents(); saveExercises(); saveSessions(); saveTemplates();
+  practiceState=null;
+  toast('Data slettet');
+  renderSettings();
+}
+
+// 4a — Export entire book database as semicolon-separated CSV (BOM for Excel UTF-8)
+function exportBooksCSV(){
+  if(!exercises.length){ toast('Ingen øvelser å eksportere'); return; }
+  const cols=['id','bok','bokKort','forfatter','kategori','øvelse','side','nivå','fokus'];
+  const csvVal=v=>{ const s=String(v??'').replace(/"/g,'""'); return /[;\n"]/g.test(s)?`"${s}"`:s; };
+  const rows=[cols.join(';'),...exercises.map(ex=>cols.map(c=>csvVal(ex[c])).join(';'))];
+  const blob=new Blob(['\uFEFF'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'slagverk_bøker.csv'});
+  a.click(); URL.revokeObjectURL(a.href);
+  toast(`${exercises.length} øvelser eksportert`);
+}
+
+// 4b — Import book database from JSON (replaces all exercises after validation + confirmation)
+// Parse semicolon-separated CSV, handling quoted fields and BOM
+function parseBookCSV(text){
+  text=text.replace(/^\uFEFF/,''); // strip Excel BOM
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
+  if(!lines.length) return [];
+  function parseLine(line){
+    const fields=[]; let i=0;
+    while(i<=line.length){
+      if(line[i]==='"'){
+        let v=''; i++;
+        while(i<line.length){ if(line[i]==='"'&&line[i+1]==='"'){v+='"';i+=2;} else if(line[i]==='"'){i++;break;} else v+=line[i++]; }
+        fields.push(v);
+        if(line[i]===';') i++;
+      } else {
+        const end=line.indexOf(';',i);
+        if(end===-1){fields.push(line.slice(i));break;}
+        fields.push(line.slice(i,end)); i=end+1;
+      }
+    }
+    return fields;
+  }
+  const headers=parseLine(lines[0]);
+  return lines.slice(1).map(l=>{ const v=parseLine(l); const o={}; headers.forEach((h,i)=>o[h]=v[i]??''); return o; });
+}
+
+// 4b — Import book database from CSV (same format as export)
+function importBooksCSV(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const list=parseBookCSV(e.target.result);
+      if(!list.length){ toast('Ingen øvelser funnet i filen'); input.value=''; return; }
+      const required=['id','bok','bokKort','forfatter','kategori','øvelse','side','nivå','fokus'];
+      const missing=required.filter(f=>!(f in list[0]));
+      if(missing.length){ toast('Mangler kolonner: '+missing.join(', ')); input.value=''; return; }
+      if(!confirm(`Dette vil erstatte alle ${exercises.length} øvelser i databasen med ${list.length} øvelser fra filen. Fortsett?`)){ input.value=''; return; }
+      exercises=list;
+      saveExercises();
+      toast(`${list.length} øvelser importert`);
+      renderBooks();
+    } catch(err){ toast('Feil: '+err.message); }
+    input.value='';
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+// =====================================================================
+// CALENDAR SCREEN
+// =====================================================================
+const STUDENT_COLORS=['#FF6B35','#30D158','#0A84FF','#FFD60A','#BF5AF2','#FF453A','#32ADE6','#FF9F0A','#AC8E68','#6AC4DC','#30B0C7','#A2845E','#FF6961','#77DD77','#AEC6CF'];
+
+let calYear=new Date().getFullYear();
+let calMonth=new Date().getMonth();
+
+function studentColor(id){
+  const idx=students.findIndex(s=>s.id===id);
+  return STUDENT_COLORS[Math.max(0,idx)%STUDENT_COLORS.length];
+}
+
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+function calGoToday(){ calYear=new Date().getFullYear(); calMonth=new Date().getMonth(); renderCalendar(); }
+
+function renderCalendar(){
+  const el=document.getElementById('screen-calendar');
+  const today=todayStr();
+
+  // Index sessions by date
+  const byDate={};
+  sessions.forEach(s=>{
+    if(!s.dato) return;
+    (byDate[s.dato]||(byDate[s.dato]=[])).push(s);
+  });
+
+  // Calendar arithmetic
+  const firstDay=new Date(calYear,calMonth,1);
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const monthLabel=firstDay.toLocaleDateString('no-NO',{month:'long',year:'numeric'});
+
+  // Monday-first day-of-week offset
+  let startDow=firstDay.getDay(); // 0=Sun
+  startDow=startDow===0?6:startDow-1; // Mon=0
+
+  // Day header row (Mon–Sun)
+  const DAY_NAMES=['Ma','Ti','On','To','Fr','Lø','Sø'];
+  const dhHtml=DAY_NAMES.map(d=>`<div class="cal-dh">${d}</div>`).join('');
+
+  // Build cells
+  let cells='';
+  for(let i=0;i<startDow;i++) cells+=`<div class="cal-cell cal-empty"></div>`;
+
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const daySess=byDate[dateStr]||[];
+    const isToday=dateStr===today;
+    const dow=(startDow+d-1)%7; // 5=Sat,6=Sun
+    const isWeekend=dow>=5;
+    const nameEntries=daySess.slice(0,5).map(s=>{
+      const color=studentColor(s.elevId);
+      const st=getStudent(s.elevId);
+      const firstName=(st?.navn||'?').split(' ')[0].slice(0,6);
+      return `<div class="cal-cell-name"><div class="cal-cell-name-dot" style="background:${color}"></div><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(firstName)}</span></div>`;
+    }).join('');
+    const moreCount=daySess.length>5?`<div style="font-size:8px;color:var(--text3)">+${daySess.length-5}</div>`:'';
+    cells+=`<div class="cal-cell${isToday?' cal-today':''}${isWeekend?' cal-weekend':''}${daySess.length?' cal-has-sess':''}" ${daySess.length?`onclick="openCalDay('${dateStr}')"`:''}>
+      <div class="cal-day-num">${d}</div>
+      ${nameEntries?`<div class="cal-cell-names">${nameEntries}${moreCount}</div>`:''}
+    </div>`;
+  }
+
+  // Pad end
+  const totalCells=startDow+daysInMonth;
+  const remainder=totalCells%7;
+  if(remainder>0){ for(let i=remainder;i<7;i++) cells+=`<div class="cal-cell cal-empty"></div>`; }
+
+  // Session count for this month
+  const monthPfx=`${calYear}-${String(calMonth+1).padStart(2,'0')}`;
+  const monthSessCount=sessions.filter(s=>s.dato&&s.dato.startsWith(monthPfx)).length;
+
+  // Legend
+  const legendHtml=students.map((s,i)=>{
+    const monthCount=sessions.filter(x=>x.elevId===s.id && x.dato && x.dato.startsWith(monthPfx)).length;
+    return `<div class="cal-legend-item" onclick="openStudentSessions('${esc(s.id)}')" title="Vis ${esc(s.navn)}s økter denne måneden">
+      <div class="cal-legend-dot" style="background:${STUDENT_COLORS[i%STUDENT_COLORS.length]}"></div>
+      <span>${esc(s.navn)}</span>
+      <span class="cal-legend-count">${monthCount}</span>
+    </div>`;
+  }).join('');
+
+  el.innerHTML=`
+    <div class="s-head"><div class="s-title">Kalender</div>
+      <button class="btn btn-ghost btn-sm" onclick="calGoToday()">I dag</button>
+    </div>
+    <div class="cal-nav">
+      <button class="btn btn-secondary btn-icon" style="font-size:18px" onclick="calPrev()">‹</button>
+      <div class="cal-month-title">${esc(monthLabel)}</div>
+      <button class="btn btn-secondary btn-icon" style="font-size:18px" onclick="calNext()">›</button>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-dh-row">${dhHtml}</div>
+      <div class="cal-cells">${cells}</div>
+    </div>
+    ${monthSessCount?`<div style="font-size:12px;color:var(--text3);font-family:var(--mono);margin-bottom:10px">${monthSessCount} økt${monthSessCount!==1?'er':''} denne måneden</div>`:''}
+    ${students.length?`<div class="cal-legend">${legendHtml}</div>`:''}
+    ${!sessions.length?`<div class="empty" style="padding:24px 0"><div class="empty-icon">📅</div><div>Ingen økter ennå</div><div class="empty-msg">Lagre en økt eller importer Excel</div></div>`:''}
+  `;
+}
+
+function calSessHtml(sess, color, nameOrDate){
+  const catChips=CATS.map(cat=>{
+    const k=sess.kategorier?.[cat];
+    const planCount=(k?.planlagt||[]).length;
+    const hwCount=(k?.lekse||[]).length;
+    if(!planCount&&!hwCount) return '';
+    return `<div class="cal-sess-cat"><b>${CAT_LABELS[cat]}</b> ${planCount}${hwCount?` ★${hwCount}`:''}</div>`;
+  }).filter(Boolean).join('');
+  return `<div class="cal-day-session">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div class="cal-sess-student">
+        <div class="cal-sess-color" style="background:${color}"></div>
+        <span>${esc(nameOrDate)}</span>
+        ${sess.tid?`<span class="cal-sess-time">${esc(sess.tid)}</span>`:''}
+      </div>
+      <button class="cal-go-btn" onclick="openPracticeForSession('${esc(sess.elevId)}','${esc(sess.dato)}')" title="Åpne i Øving">✏️ Øving</button>
+    </div>
+    ${catChips?`<div class="cal-sess-cats">${catChips}</div>`:'<div style="font-size:13px;color:var(--text3)">Ingen øvelser registrert</div>'}
+  </div>`;
+}
+
+function openCalDay(dateStr){
+  const daySess=sessions.filter(s=>s.dato===dateStr).sort((a,b)=>(a.tid||'').localeCompare(b.tid||''));
+  if(!daySess.length) return;
+  document.getElementById('modal-cal-day-title').textContent=fmtDate(dateStr);
+  const bodyHtml=daySess.map(sess=>{
+    const st=getStudent(sess.elevId);
+    return calSessHtml(sess, studentColor(sess.elevId), st?.navn||'Ukjent');
+  }).join('');
+  document.getElementById('modal-cal-day-body').innerHTML=bodyHtml||'<div class="empty">Ingen økter</div>';
+  document.getElementById('modal-cal-day').classList.add('open');
+}
+function closeCalDay(){ document.getElementById('modal-cal-day').classList.remove('open'); }
+
+function openStudentSessions(studentId){
+  const st=getStudent(studentId);
+  const monthPfx=`${calYear}-${String(calMonth+1).padStart(2,'0')}`;
+  const monthLabel=new Date(calYear,calMonth,1).toLocaleDateString('no-NO',{month:'long',year:'numeric'});
+  const stSess=sessions
+    .filter(s=>s.elevId===studentId && s.dato && s.dato.startsWith(monthPfx))
+    .sort((a,b)=>a.dato.localeCompare(b.dato));
+  const color=studentColor(studentId);
+  document.getElementById('modal-cal-day-title').innerHTML=
+    `<span style="display:inline-flex;align-items:center;gap:8px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color}"></span>${esc(st?.navn||'Ukjent')}</span><span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:6px">${esc(monthLabel)}</span>`;
+  const bodyHtml=stSess.length
+    ? stSess.map(sess=>calSessHtml(sess, color, fmtDate(sess.dato))).join('')
+    : `<div style="color:var(--text3);padding:16px 0;font-size:14px;text-align:center">Ingen økter denne måneden</div>`;
+  document.getElementById('modal-cal-day-body').innerHTML=bodyHtml;
+  document.getElementById('modal-cal-day').classList.add('open');
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  loadAll();
+  initMsal();
+  practiceState=newPracticeState();
+  renderPractice();
+  tryAutoConnect();    // async — restores FSA file handle from IndexedDB
+  handleMsalRedirect(); // async — handles OAuth redirect callback on mobile
+});
+</script>
+</body>
+</html>
