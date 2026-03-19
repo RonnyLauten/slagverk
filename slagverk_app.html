@@ -6,7 +6,7 @@
   <title>Slagverk</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.27.0/lib/msal-browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
   <style>
     :root {
       --bg: #0F0F0F;
@@ -567,7 +567,7 @@ let _msal = null;
 function graphClientId(){ return localStorage.getItem('rl_graph_client_id')||''; }
 function saveGraphClientId(id){ localStorage.setItem('rl_graph_client_id',id.trim()); }
 
-function initMsal(){
+async function initMsal(){
   const cid=graphClientId();
   if(!cid||!window.msal) return;
   try{
@@ -575,6 +575,8 @@ function initMsal(){
       auth:{ clientId:cid, authority:'https://login.microsoftonline.com/consumers', redirectUri:GRAPH_REDIRECT_URI },
       cache:{ cacheLocation:'localStorage', storeAuthStateInCookie:true }
     });
+    // MSAL v3 requires initialize(); v2 does not have it — call only if present
+    if(typeof _msal.initialize==='function') await _msal.initialize();
   }catch(e){ console.warn('initMsal:',e); _msal=null; }
 }
 
@@ -1388,7 +1390,7 @@ function renderSettings(){
                  <input id="graph-client-id-input" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
                    value="${esc(graphClientId())}"
                    style="font-family:monospace;font-size:12px"
-                   oninput="saveGraphClientId(this.value);initMsal()">
+                   oninput="saveGraphClientId(this.value);initMsal().catch(console.warn)">
                </div>
                <button class="btn btn-primary btn-full" onclick="signInMicrosoft()">
                  <svg width="16" height="16" viewBox="0 0 21 21" style="flex-shrink:0"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
@@ -2061,9 +2063,9 @@ function openStudentSessions(studentId){
 // =====================================================================
 // INIT
 // =====================================================================
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',async()=>{
   loadAll();
-  initMsal();
+  await initMsal();    // async — MSAL v3 requires initialize() to be awaited
   practiceState=newPracticeState();
   renderPractice();
   tryAutoConnect();    // async — restores FSA file handle from IndexedDB
