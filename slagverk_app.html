@@ -794,8 +794,17 @@ function renderPractice(){
   if(!practiceState) practiceState=newPracticeState();
   const ps=practiceState;
 
-  const activeStudents=students.filter(s=>s.aktiv!==false);
-  const studOpts = activeStudents.map(s=>`<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(s.navn)}</option>`).join('');
+  const DAY_ORDER={mandag:1,tirsdag:2,onsdag:3,torsdag:4,fredag:5,lørdag:6,søndag:7,'':99};
+  const activeStudents=students.filter(s=>s.aktiv!==false).slice().sort((a,b)=>{
+    const da=DAY_ORDER[(a.defaultDag||'').toLowerCase()]??99;
+    const db=DAY_ORDER[(b.defaultDag||'').toLowerCase()]??99;
+    if(da!==db) return da-db;
+    return (a.defaultTid||'').localeCompare(b.defaultTid||'');
+  });
+  const studOpts = activeStudents.map(s=>{
+    const dayLabel=s.defaultDag?` (${s.defaultDag}${s.defaultTid?' '+s.defaultTid:''})` :'';
+    return `<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(s.navn)}${esc(dayLabel)}</option>`;
+  }).join('');
 
   const catsHtml = CATS.map(cat=>{
     const data=ps.categories[cat];
@@ -874,6 +883,7 @@ function renderPractice(){
     <div class="action-bar">
       <button class="btn btn-primary" style="flex:1" onclick="saveSession()">💾 Lagre økt</button>
       <button class="btn btn-secondary btn-icon" onclick="printHomework()" title="Print lekse" style="font-size:18px">🖨</button>
+      ${ps.sessionId?`<button class="btn btn-danger btn-icon" onclick="deletePracticeSession()" title="Slett øving" style="font-size:18px">🗑</button>`:''}
     </div>
   `;
 }
@@ -1004,6 +1014,17 @@ function saveSession(){
   practiceState.sessionId=sess.id;
   renderPractice();
 }
+function deletePracticeSession(){
+  if(!practiceState?.sessionId){ toast('Ingen lagret økt å slette'); return; }
+  if(!confirm('Slette denne øvingen? Dette kan ikke angres.')) return;
+  sessions=sessions.filter(s=>s.id!==practiceState.sessionId);
+  saveSessions();
+  practiceState.sessionId=null;
+  CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; });
+  toast('Øving slettet');
+  renderPractice();
+}
+
 function printHomework(){
   if(!practiceState?.studentId){ toast('Velg en elev'); return; }
   const st=getStudent(practiceState.studentId);
