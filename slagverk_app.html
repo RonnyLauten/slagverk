@@ -799,11 +799,17 @@ function renderPractice(){
     const da=DAY_ORDER[(a.defaultDag||'').toLowerCase()]??99;
     const db=DAY_ORDER[(b.defaultDag||'').toLowerCase()]??99;
     if(da!==db) return da-db;
-    return (a.defaultTid||'').localeCompare(b.defaultTid||'');
+    // Sort by start time (first part before dash/space)
+    const ta=(a.defaultTid||'').split(/[-–]/)[0].trim();
+    const tb=(b.defaultTid||'').split(/[-–]/)[0].trim();
+    return ta.localeCompare(tb);
   });
   const studOpts = activeStudents.map(s=>{
-    const dayLabel=s.defaultDag?` (${s.defaultDag}${s.defaultTid?' '+s.defaultTid:''})` :'';
-    return `<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(s.navn)}${esc(dayLabel)}</option>`;
+    const parts=[];
+    if(s.defaultDag) parts.push(s.defaultDag);
+    if(s.defaultTid) parts.push(s.defaultTid);
+    const suffix=parts.length?` (${parts.join(' ')})` :'';
+    return `<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(s.navn)}${esc(suffix)}</option>`;
   }).join('');
 
   const catsHtml = CATS.map(cat=>{
