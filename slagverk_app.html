@@ -651,7 +651,7 @@ async function loadFromGraph(){
   if(!token) return;
   try{
     const resp=await fetch('https://graph.microsoft.com/v1.0'+GRAPH_FILE_PATH,{headers:{'Authorization':'Bearer '+token}});
-    if(resp.status===404){ toast('Ingen datafil i OneDrive ennå — lagres ved neste lagring'); return; }
+    if(resp.status===404){ toast('Ingen datafil i OneDrive ennå — lagres ved neste sending'); return; }
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     const data=await resp.json();
     if(data.students)  students=data.students;
@@ -659,22 +659,34 @@ async function loadFromGraph(){
     if(data.sessions)  sessions=data.sessions;
     if(data.templates) templates=data.templates;
     lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
+    if(data.savedAt) localStorage.setItem('rl_graph_saved_at', JSON.stringify(data.savedAt));
     updateSyncDot('ok');
-    toast('📱 Lastet fra OneDrive');
+    toast('☁️ Hentet fra OneDrive');
     renderPractice(); renderSettings();
   }catch(e){ toast('Feil ved lesing fra OneDrive: '+e.message); updateSyncDot('err'); }
+}
+
+async function pushToOneDrive(){
+  if(!confirm('Send nåværende data til OneDrive?\n\nDette vil overskrive det som ligger der fra andre enheter.')) return;
+  await saveToGraph();
+  toast('☁️ Data sendt til OneDrive');
 }
 
 async function saveToGraph(){
   const token=await getGraphToken();
   if(!token) return;
   try{
-    const data={students,exercises,sessions,templates,savedAt:new Date().toISOString()};
+    const savedAt=new Date().toISOString();
+    const data={students,exercises,sessions,templates,savedAt};
     const resp=await fetch('https://graph.microsoft.com/v1.0'+GRAPH_FILE_PATH,{
       method:'PUT',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body:JSON.stringify(data,null,2)});
     if(!resp.ok) throw new Error('HTTP '+resp.status);
+    localStorage.setItem('rl_graph_saved_at', JSON.stringify(savedAt));
     updateSyncDot('ok');
+    // Update timestamp label if visible
+    const el=document.getElementById('od-saved-at');
+    if(el) el.textContent='Sist lagret: '+new Date(savedAt).toLocaleString('no-NO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
   }catch(e){ toast('Feil ved lagring til OneDrive: '+e.message); updateSyncDot('err'); }
 }
 
@@ -794,23 +806,8 @@ function renderPractice(){
   if(!practiceState) practiceState=newPracticeState();
   const ps=practiceState;
 
-  const DAY_ORDER={mandag:1,tirsdag:2,onsdag:3,torsdag:4,fredag:5,lørdag:6,søndag:7,'':99};
-  const activeStudents=students.filter(s=>s.aktiv!==false).slice().sort((a,b)=>{
-    const da=DAY_ORDER[(a.defaultDag||'').toLowerCase()]??99;
-    const db=DAY_ORDER[(b.defaultDag||'').toLowerCase()]??99;
-    if(da!==db) return da-db;
-    // Sort by start time (first part before dash/space)
-    const ta=(a.defaultTid||'').split(/[-–]/)[0].trim();
-    const tb=(b.defaultTid||'').split(/[-–]/)[0].trim();
-    return ta.localeCompare(tb);
-  });
-  const studOpts = activeStudents.map(s=>{
-    const parts=[];
-    if(s.defaultDag) parts.push(s.defaultDag);
-    if(s.defaultTid) parts.push(s.defaultTid);
-    const suffix=parts.length?` (${parts.join(' ')})` :'';
-    return `<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(s.navn)}${esc(suffix)}</option>`;
-  }).join('');
+  const activeStudents=students.filter(s=>s.aktiv!==false);
+  const studOpts = activeStudents.map(s=>`<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(s.navn)}</option>`).join('');
 
   const catsHtml = CATS.map(cat=>{
     const data=ps.categories[cat];
@@ -889,7 +886,6 @@ function renderPractice(){
     <div class="action-bar">
       <button class="btn btn-primary" style="flex:1" onclick="saveSession()">💾 Lagre økt</button>
       <button class="btn btn-secondary btn-icon" onclick="printHomework()" title="Print lekse" style="font-size:18px">🖨</button>
-      ${ps.sessionId?`<button class="btn btn-danger btn-icon" onclick="deletePracticeSession()" title="Slett øving" style="font-size:18px">🗑</button>`:''}
     </div>
   `;
 }
@@ -1020,17 +1016,6 @@ function saveSession(){
   practiceState.sessionId=sess.id;
   renderPractice();
 }
-function deletePracticeSession(){
-  if(!practiceState?.sessionId){ toast('Ingen lagret økt å slette'); return; }
-  if(!confirm('Slette denne øvingen? Dette kan ikke angres.')) return;
-  sessions=sessions.filter(s=>s.id!==practiceState.sessionId);
-  saveSessions();
-  practiceState.sessionId=null;
-  CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; });
-  toast('Øving slettet');
-  renderPractice();
-}
-
 function printHomework(){
   if(!practiceState?.studentId){ toast('Velg en elev'); return; }
   const st=getStudent(practiceState.studentId);
@@ -1427,12 +1412,25 @@ function renderSettings(){
       <div class="card">
         <div style="padding:14px 16px">
           ${graphAccount()
-            ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
                 <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;flex-shrink:0"></span>
-                <span style="font-size:13px">Innlogget: <strong>${esc(graphAccount().username||graphAccount().name||'Microsoft-konto')}</strong></span>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px">Innlogget: <strong>${esc(graphAccount().username||graphAccount().name||'Microsoft-konto')}</strong></div>
+                  <div id="od-saved-at" style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:2px">${(()=>{try{const d=JSON.parse(localStorage.getItem('rl_graph_saved_at')||'""');return d?'Sist lagret: '+new Date(d).toLocaleString('no-NO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';}catch{return '';}})()}</div>
+                </div>
                </div>
-               <button class="btn btn-secondary btn-full btn-sm" onclick="loadFromGraph()">🔄 Last inn fra OneDrive</button>
-               <button class="btn btn-ghost btn-full btn-sm" style="margin-top:6px" onclick="signOutMicrosoft()">Logg ut</button>`
+               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+                 <button class="btn btn-full" style="background:#1a3a2a;color:#30D158;border:1.5px solid #30D158;font-size:14px;font-weight:600;padding:12px 10px;gap:6px" onclick="loadFromGraph()">
+                   <span style="font-size:18px">☁️↓</span><span>Hent fra<br>OneDrive</span>
+                 </button>
+                 <button class="btn btn-full" style="background:#1a2a3a;color:#0A84FF;border:1.5px solid #0A84FF;font-size:14px;font-weight:600;padding:12px 10px;gap:6px" onclick="pushToOneDrive()">
+                   <span style="font-size:18px">☁️↑</span><span>Send til<br>OneDrive</span>
+                 </button>
+               </div>
+               <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:10px">
+                 ⚠️ <strong style="color:var(--yellow)">iPad-tips:</strong> Bruk alltid <em>«Hent fra OneDrive»</em> først når du starter på iPad, så du ikke overskriver nyere PC-data.
+               </div>
+               <button class="btn btn-ghost btn-full btn-sm" onclick="signOutMicrosoft()">Logg ut</button>`
             : `<div style="font-size:13px;color:var(--text2);margin-bottom:12px">
                 Logg inn med Microsoft-kontoen din for å lese og skrive data direkte til OneDrive. Fungerer på iPhone og alle nettlesere.
                </div>
@@ -1450,7 +1448,7 @@ function renderSettings(){
           }
         </div>
         <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">
-          Data lagres som <strong>Slagverk/slagverk_data.json</strong> i OneDrive. Appen oppdager endringer automatisk.
+          Data lagres som <strong>Slagverk/slagverk_data.json</strong> i OneDrive.
         </div>
       </div>
     </div>
