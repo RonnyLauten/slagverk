@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Slagverk</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Slagverk">
+  <meta name="theme-color" content="#0F0F0F">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAZ0ElEQVR42u2deZRlVXX/v/ucc+99795679VcPUE31QPQjSBC4wBI0IiQEFyAgJFB/PlDSfglK8ZIEE3MiuBSAwnxF8KPX+JSGg3iEDRqRIggagu0jG13Qw/03PZQXV3Dm++95+z8cV8Nr7rogUC9V9Xnu3r1WlWrznv3nvM5++y9z0R803JYWU0mYavAysJhZeGwsnBYWTisLBxWFg4rC4eVhcPKwmFl4bCysnBYWTisLBxWFg4rC4eVhcPKwmFl4bA6OhGByMJhNaGyJUhAx4jjkR/JwnGM9ryJz1wcQrXEfpYzrTAahQEYDdG8TaCmWc9jho7AgJQQEmzA3PRkCMQhjI7OvSo6472m6wRISQO71Usr3ce/TqUhpAIY04wPPj22JiSmopSHVJztgBBUGESliHQLpGrOmh17ch1xOlu+5rb41HOgQVEMMEsHLuSurakVt8ptv2lOPqYDHKM97+2XTa+eV4MjrJRu/Of49LNpMA8a9TMYWnOQEYP7gjs+SPkDUE6zWUH5N2fNbXaboSP2s+X/dWd4wXWmfR5UCo5n2mbrpWfqU94lt60R/TvheM04vgiJ8nB09hXhBdfScAHSqTkfyT8hKaxwaxtSOfX8T+CkgOZ6hengkGpdvub2+PRzKJ+ncgk6go4pLNFQXvcsKN9wF7f2IAqb0UtlhlDRWy6EZpCYlB4qh/Gyc7l9DnTUbK/Q3HAIiXI+evtl8aln02AB0oEQIz1PQDlUKpiO7urv/wmiCtBkcCQ2L9tpuudTFE/e8EQwsWlpNT29iKoWjmOo5wEMqaDcwztVshnDxiaG46h63qzm63nMUB4d+K3Ys5mVmtwlYgZJKuepf2cTOqRN73OII+hVJECy6YYVIVEpmAWnmp75FL+KVTOGPVduWyv2bYVyLRxHN6ZQYYAO7GYpX7XiSFC1RMN9ENREfBAhDrmlvfShL5hcF+LJLJ/WcBzSOvWjfwKjCR1q0exmo1J0Xv4VXAF+lUwGG7he5fK/hJDN5XbEYfm6z5ue46lUrMuRswEbELEfQIjUN28Tm59rzlRNkzukBukW5/H7xa5t7LcgjibJBJBAtRqftLxy5WcQh01hPKRCcah66c3xKWdTsQgpx5tD9nz2fMShevlX/j9c76z8FvwsjG7C6m/uuRVmSEWlofSKT5VvuMt0dFM5gonBXDf9JgQVi+H5l4uhfe5Dd6C1BzpuJBn5/nj5H1TffQ2VSnVkGM1+4K78d7XqB6JwQOzdCjbwc81JBqZBhpQZTkr073SeewTpLLf1IJ1l1yUQzLiBnARVw/jEt4rikNz0DFLBqw5Db3xixhx/SukjdxDJGsQjHgYHgVr7q/S/flz076JKAY4H5TbmOY/QcZoeE29CIAoRVbl9tunpZTbV9/25nr+UykUIOc6BFZDS//JH5IZVaGmbavtBBB2zmy796Vf0vCVULo09mzHspcT+HcHfX1fDwujmn0+eJus5jIFy4GeocECuf0qt+Vn6gc9SYQDKGet5RDAaxpRuuMv0no5yfqxtpooOxNXKB/5azz+RSvXUKkVhOX3fpyh/AMqFjqfBSoPptNiHGcZAOvB8tPaI7Wv9f/kzCFFb5DHqnMYRB62lD32Bg1ZElalbSiMVCgfC37spOusCyhfqczPMjpP6zhfkK8/CzzSthzGd4RhFhA3iCEGr3LAq9eDt7Dh1IYyQVC6ZruNKN/4zlIt4SoJbqVAYiM+6pHLRx6hQqiNDaw5877GvO794EJmORnrKM9AhPUSUm/Ll+qdEHEVvOY8q1bHJFyEorJrZx3GmW73wCJT3xk6FC4lqibsXlG64i6SEGeeEGs1+oDY+l77/Vnh+s83Iz1w4EiviBXLTr7mlWy96M1WrY4OIEFSp6MWnws2o5x5GquWNGuOJoGM4bumjXzZdx1M47hmMgeOK4X7/7o9RWIZ0poWfMZ2HlYMAgZtOPfBZtfZXnAnqjLZUVChVz78mOv9aFAffwGnPqFK54la98E2ThE5A+qs30+BeOKlmDllnKBzMIAEnlV5xi3zlN5wO6t09orBS/uBfx2f+Pob3v/58SInSUPTu68Nz3jfRCWXmdCr1nS/KDU8hPZ2c0JlkOQA2UC4VBvz7bqHiELupsUkKIjBTWC1f9Rm9eDnKhdczuJUSxSF9yvnlSz8xqRPqPvFt54lvIGidpmRghmxqMhrpFurb7t/zx1TOQ6lxyQ+BWLOfLd9wF+c6US29PsGtEKiWzaze0nW3UxzVTejUnNDnU9/5PNKZaednzDg4AGiNdEZueib94G3surURZ9Q5rZZNtqN8w13sZxFHky8qOyon1BgQVa7+HGfa66JlZiiH8gdS3/irmtth4WgOPmJkO9UzP0o/cBv7fl2rCEnlUrzo1MpVf4WwnMyY/4/gKOcr7781Xnx6XSY0oUM5/opPiz2b4aWbekPNsQVHwkeQc574hvvEtzjwJwYvw8XozAsqH/xbhOXXPrMvJIqD0XlXh+ddQcX6SVcdc4uffuhOueZxBDloPd2rczrnOV5Njqeef8TMWqx7T6ZKpS75EVb1SW8WpZJ86ZdItxx1eCkkynm9+Kzyh79IYVSzIqNkZFrcld/3vvf3SGemu82YuXCQgBDq5Sf1wuWmcx6F4RgfJKgaRqe8Uwz2yU3PIHU0fJBAXOVsV+mme+GmocftgTaa04Hcssb/6idBspn3Rh/Dw8pYcOtQOe/f88eibwen/fp+TBRHlStu0YvORDlfNy4c2s9gA6Lyh//OtHYjGgccMxyHikP+fZ9CWGnCReQWjgnBrYGbpuKgf98tVBiAknUz+3EM5ZZuvJu7jj/S5IeQKA5WL/l4fOJbJnFCpUo/eBvteQWpYPpmNY4ZOGrJj4x45Vl/xa3seCAxPrhFFHKQK33oixy0Ig4PE9xKhXx/dO5V1XddM6kTmvrxvWrVfzRgeZGF438UvGQ65Nqfpx/4W3a9g2f2de8p5Y9+GUbXrTg82GaU8nrhGZX330JRfb5Lx5xpcVY94v7n3Whpn2FkzFCHdIL/4abl+qfQ0hYvPXPizH61YmbP50yXWv0YpDvZ0naCjjjIlf7obs500HhXw2j2A7ljQ/orn6CRaTYLx7Tjg+EFas3PONOjF502cWY/rOqTTiMN+eJ/wc9ODF6IEFXK//sf9AlvovK4ASVZ+Vcp+P/ycdG/E54/HSddj+1hZRwgcFKpBz+nNj7PQVCXnhKShkuVCz8anX8dCgN182eH2H4CZsdJf/M2sW110+46sXAcsfEQEkKm//+fyh3r2fcnzuzHceWqT+slZ9X4YB7ZfnLxJNtPtGbf9376dfXrH067lX8WjldLfrhUGEjf/xkqDB5m2bqTQmnYzD+1/IHPHOSEag4CtWal99CXEORmMBk4ts4hNRp+Vuw43LL1ljYUB7ilrXzt5zjI1U26GsOptNi7Lb3i1sOfumHhmH7B7aGXrXcfX77xbk4FlSs/rRecdJjtJzMlE3oMRysHjy+HWLYeh9w2J37LhXrBqVQNJ2ZCPS/9zc+pF/8LLa0z1Qk9hi3HiN+AbIfz2Ar3Z9/loD7hTQJRxbTPha5Pi03n7SevWWqmvVCtRWnEiaS6mKXu1Z3U/Z/mXFd06jupWBo/c4u4/mxCYzgI1IYXvB/8IzLttdhnNEiu/ceTfIWFo6EcJBDQSMNwrU/ruNb1zciuVBKQ45wMEpztRDrjffdLprXbzF6EaJzjSfVIOY7Ys9X/fzch2QMdRyPGhmohLgkoF2AIp/5odgbz9CVGTTMaEiDAMAY6rrVT0lTSgRCc6QAbznWZXBfFkZ6zhIMsRREHOT1nMYxJSkNI070AykFUhXSg9aEXDhJz6drb4aQgIPp3i/6dkA50LHa8BDZULYq+HZCSCgOIqjAabGp3JCi3dkz7KMEJxBaO1wMIUWs2oxGFyTnXEBJuiv2c6ZjLQauZs4TdlJl3Ijue6V4AIk61cMoHA6PnyDEwITMex2CGnwObQ3mXRIhj03U8zz6h1qZi3GAVAwSKIioMQErRtx1hWe5+BeW83LuF8v2ifycVh1DO1xYHSQfKHblMo9ntSnOez0E1D8DECCuIIwiBdMbkukz3CWbOYj33RG6fbdrmcJBjx0HiABiAkyYHWENr0AQngCbzTo7spLa6VuSJH0IE4SSri0Ej9GiQNlQapKE+cWC32L1J7npZ7N1KA7upOAQdQ0o4aSinFkM1HyVNBocQACGOamvE/ayeu0TPf5NecJrpWWDaZnOQhQQMYEC1McWMtBbVtdZUR8g84mRg7HmIIBWkYkkQgAFVyjS4T/Ztk9vXyS0viJ0v0VAfmOGm4HgAjXsdC8e4HBSMRrUEoznXpXtPj085T89fZnoWsqdgQJoRR+McTKrVftPnVcCjxBCEhFKsZGJaRP9OuWOdWrdSbXia9u+EMUj5kE6TGJImgCPBopxHKogXnxmffmG8+EzTOQ8CFDPCSm0SZMwbne5ZuBGflAjKY0eCQEMDavPzavVP1Zqf0/B+eGkor+F5tobCkbR3aRipluiMi8J3XqXnngQlKIwRhbXqoxmdpkvOogEgHfZcAGL/b52nv++u/A7174KfBYkGrhRpHBzJVXhhOVp+cfjej+h5SxAzheXaxnkiHFvi2hJ5x2NPiQN97s+/6T62AnHYwJ1zDYIjOXhPudXL/iI853LEhqrlmW8njtyWKJfTjnr52dS/fVb07YCbboj9EI0hI9kD8rF/Cs+7nApFCiu1lJEVEYSEjmm4EC86o/jx+033fESVhlROQ+AQKBfCd384PvkMGsxDWiwmQ0QqKhY411a97OZGJVVFA15bR5ztCt92KVWi5ryEplmkFJVK0cnv0L2nv24nizS75WCGcuB4MGwBOHxdCQEv3ZC0h2jA20qHBveodb+MU645NhZGvMaq0jp2UnLXRrH5BbgN4KMhgz1Dee4P/2/r8H4/l4mjyHJwsHSsleu2+TL1vTupNIxDXEc0w4YVo1xR2n//J65f+ezqtvYMM2utLRA1LLTWWre2BX1DQ3f+2Y1YtxJ+Yw78aAAcBhBkNpWdT/zg6euvuPTee/9VCLS2BkQUx9oYc2wykfQQY0w2G2SzwcMPP/qHl17yF/f+20P7JSTrRrhnjYCDASUe2FyougHH4c03f/Kiiy5aseIbWsdtbUE6nWbmY4eShAmtjeu6ra2B76cfe+zxK6+88uqrr96yZXNnZ+fXNuWTJUoNCKinPkPKgBb4g8f6f30ganEESBSLxSiKli5deskl77v44osXLVqcSqkoQqVS1ToGIISgGZRQZ2ZmYwxLKT3P8zxhDLZt2/H4449/97vfXrVqVRzH2WwWQKxNWuKJ3+2aGwhjprorTzUcyS2IgyGf/WjfgZAdAo+0falUqlQquVzutNNOe897LnjX+e9acMKCTMYHUK2aKIriOGZmIhJCADgULrVpfRzdLO4bVopHlIDuOI7nKSFQreqdO7Y/+dRTDz/88KpVT+/du1cp1dLSQkSJEyYIhYi//872c2Z7OmI5tR2kMTmoCVPvyQiSTqd939daP/nkk0888URLNtfb23vuuee+bfnyZae8qaenJ5cLiMCMMDRxHCesJLgkqhGTZKATFI98bHo9SiXNP8oBMwshpJSO47iuTJJY5XLc19e3YcP6Z5595olf/GLd2rUH+vuloCAI2traEpMycexvkNFsogRlUikEBC0tbVJ40Hs3r79vzYv33iPa29vnzp27aNHiZcuWLV26bOHCRR0d7a2tuWTtd7JAolqNmTmKY4ojEVUAsJBaeVQzVzTB0kw0PDqmagkApGI3PaHfH2wGCGAi0rGMq8l3GSellBJCOI6ScmTlq0GhUN6zZ8+2bVvWrVu3bt26DRvWb9++vW//fl2ttPlekE63dLcXYmZjmi1ka7rstSAMh/r8HvXVd3SQoGf2R1f9ciCsVl566aXVq1d/+9vfchynra2ts7Nz3rzjlixZ0t3dddJJS9PpdG/vQkfKjrndcsOL4p7/Ax3TKefyR7/EGiRgDKrVaBQIZo5G8yvGcCqtNrwQfO2TMFoveWvhw3dQWB6d8UmafLSg4zhKgTVIgTav5S9/DGxw8jvMjXcc2HcgiuNt27YVi8WNGzfu27d3/fqXd+3atXv3nsHBgUqlQgTHcdOey276guPbvvL2VsPm6b3VP1w5EDjUbAnjZpzaYMAhZF0CwSejtZau9H0/6f3GmEqlsnXr1g0bNjz66CPM7LqOELKzs9NznFm9S97uVz7bVoTRW9a+uOp7/9mTawnDKJPNLliwwIwk7IWgzs6upMVZAy7IVVQYgNEqKrf4ktwWUC153d8/WK1WiYiZlRJ79+7bs2ePq1Reo/L0j68sD8NRa5556tb3f2Dv9i35QnFwcLBSqSRxqVJKKeU4TiqV8n2/NtaATWjI6BbFIMo2HxbNC0fCR2LL49pGMjbjbLuUUkqZTqeT0SEZj4aGhgR47Zbt7lwfF84D0Y4du6679ppcSsXaeJ7X0dEx6goopRYuXKSUZGYBFFks90p/0+kDvOall2657ANpYRjEzFKKLVu2Fgp5ISQzC0H5fD6fH3akHKjq98zyrvy940EY2Df8k5880h54JKSUMpPJJCjzOI2OGon9mvCOFo6jc1pfLQBI2njCCK2UkoRczg2CZP87O46Ty+UCBcNg5v7+/tG2YcbOnTuTz1ECgyHLuT7eOxdCDBw48Oijv8m4pE3tL13XlVKOeh5SykwmKwmxy7lsKmlhJWUul/MkJ991hEmaQ7yjheP1Th4AWpvRhqnlHAUlg4njOOP/3nXdxAWRBI44CGp3LSilcrlci0Ojc8YHt7QxhgjGjBmD5LtY0EzaLXsMLac4OOgY7b9a8wSktCC7oMAuwbKycFhZOKwsHFYWDisLh5WFw8rCYWXhsLJwWFk4rKwsHFYWDisLh5WFw8rCYWXhsLJwWFk4rCwcVhYOKysLh5WFw8rCYWXhsLJwWFk4rCwcVhYOKwuHlYXDysrCYWXhsLJwWFk4rGY2HGTrvunrqjFwMEOz5ePI6qpxB5WKqe8EzEg51OmJ2PJxOBlGoKgnJZK722e+5TCMlCfO7HAr2ghLxyHbpmLQ2yJ7s4o1CxwDcCSAXD4vJQBjEThE2xAKkblkblo54li5xksSdMRnz0ld3xsMhlN9wcw0IqOo+awO549ODExoGlJLDYAjuawpinlXSSsBe/Hwq/nskmgg5P6KEQ06NbsxPodwxD3rCz/8bSWr7CnSr9qFUgJbCvovnx8yDTKuYurfWQoUK+Zrm0s5tzFD6XRRzGj36NE91dX7Q6Fo6uuqMQfjx4bLh3S/GbWL7l+DXXltZaey1JGXJSA2KDYo6G9AnkMbZH1x0ezUcGQcMXmtKYJwSDjkKzraGn8NZaey1JGXVYSi5lNb1emdLsc89WF/A+6VNQAJ7K/y+Y/27SybdpciU99XGO2uWNaqAAyFZvVgrOiI/NbXVnYqSx15WUWoGJRi86Pf6ThnVgPuDW0MHDWfVNHaoehPVg09vT9s94SisSRxUndlzUnc68ujuALttZWdylKHLZtAMBCaWSl55xm5i49LmYgbki1sDBwjMQsVI779N/kVm0vDsck6wiEYwDBo5DJVPvrh/LWVncpSk5ZNfmRgOGIBXDDb+/ybsyfkHBM2LI/cMDhqfAhAifUD0T0bi/++vTwYGk9SWpIcoWTGaxSRiuayZlfQ+T3eTScG583yYKB1I5OEjYRjtNNIRRC0aSh6aHvlP3aVNwzHpZhTklKSkpHY8IzKlSVAEKAZoeGSZkU0P5C/O8u7cn56eacLgokYjbuLuingGDUhDEhFkKRD89yB6Me7Kz/dE24uxIOhkUSehCtIEpLrpQ2A6YNL0r5i9OEZkUHFcGQ4UDTPl+d2exfN8d7R6WZSEswcsRnxPBr85M0ARx0ilAR5pEOzqRD/bG+4qj9cPRjvLevhiGNmR5AroIiUAKFW46PZAm4CDohqD4aR1RjaoGo4MkxEgaIuT5ycVWd1OOd1e8taVdqTACNmbcZGmabAunngGB1oeJQSSZAEw+WQd5T0xuFozWC8eijamNf9VTMQmpjZMBxBAFKCiJAkTsa3zfiPnfBFR9XkYz/S2G9Gv4VryT0wUNVsgNgkl9ZS1qFWVywM5LJWZ1lOnZRzegOZ9UTyatCszZhpaS6b12xwTKDEAAIQAhAEARDBcCU0+ytma0mvH477KmbNUFTW2JSPQ8P7q0YD2iBmJkBR7fp6AXjjwkUCnCPO/8VmbGkBAZHheMRKJQQIgiOIGZ2eUAK9LSotaWlWdabEsqw6LpCz0jLjCsgRB8qwMbVXI2reFU/NC8ek5oRHWSGCGDHBhsHIV01keMNwrIl2FeOtRe1IWjcYDYSsBAoRby7EoxbbAPsqxhw2K01gRocnPEnMnCQn5qRlV0oYhks4vd0B0OqIpa1KGyxskb4SrS5BUq3ZE8ANs4EeMWnNDERdina6+HTjF8kxA4aNrnmliQnIOASit/keAJBbK5A4MgRoHqwaQTXjoZk35uMjmbIwjN4WGTgCnHwM5xwhHKp97BhuXIOOmRkcMYN5PA00/S54npY3UhMAgpxgXRhgmJG5y4QbGucktnpivOPw1gSjI3KVxzksRDC1OBOAGXFdRkOSg1Gevpo515UnzXGICLDOIR2H0WFVFz5w3W9m9rafY+gu+wnY2OWJh+8VtgqsLBxWFg4rC4eVhcPKwmFl4bCycFhZOKwsHFYWDisrC4eVhcPKwmFl4bCycFhZOKwsHFYWDisLh5WFw8rKwmFl4bCycFhZOKwsHFZNof8GoHlEmMVztw8AAAAASUVORK5CYII=">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
@@ -202,8 +209,8 @@
       position: fixed; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));
       left: 50%; transform: translateX(-50%) translateY(16px);
       background: var(--surface3); color: var(--text); padding: 10px 18px;
-      border-radius: 100px; font-size: 14px; font-weight: 500; opacity: 0;
-      transition: all 0.25s; pointer-events: none; z-index: 400; white-space: nowrap;
+      border-radius: 16px; font-size: 14px; font-weight: 500; opacity: 0;
+      transition: all 0.25s; pointer-events: none; z-index: 400; white-space: normal; width: max-content; max-width: calc(100% - 32px); text-align: center; line-height: 1.35;
     }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -269,11 +276,33 @@
     .cal-sess-cats { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
     .cal-sess-cat { font-size:12px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:3px 8px; color:var(--text2); }
     .cal-sess-cat b { color:var(--text); font-weight:500; }
+    /* ── Sync (OneDrive) ─────────────────────────────── */
+    .sync-banner { display:none; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:10px 16px 0; padding:10px 12px; border-radius:10px; background:rgba(255,69,58,0.12); border:1px solid rgba(255,69,58,0.35); font-size:13px; line-height:1.4; }
+    .sync-banner > span:first-child { flex:1 1 200px; }
+    .sync-btn-down { background:rgba(48,209,88,0.12); color:var(--green); border:1.5px solid var(--green); font-weight:600; white-space:normal; text-align:center; }
+    .sync-btn-up { background:rgba(10,132,255,0.12); color:#0A84FF; border:1.5px solid #0A84FF; font-weight:600; white-space:normal; text-align:center; }
+    .sync-hint { font-size:12px; color:var(--text3); margin:4px 2px 12px; line-height:1.4; }
+    .sync-cmp { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+    .sync-cmp-box { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:10px; font-size:13px; min-width:0; overflow-wrap:anywhere; }
+    .sync-cmp-title { font-weight:600; margin-bottom:4px; }
+    .sync-cmp-time { font-family:var(--mono); font-size:12px; color:var(--text2); margin-top:2px; }
+    .sync-cmp-sum { font-size:12px; color:var(--text3); margin-top:4px; }
+    .sync-diff { font-size:13px; background:var(--surface2); border-radius:10px; padding:10px 12px; margin-bottom:14px; display:flex; flex-direction:column; gap:8px; }
+    .sync-list { margin:4px 0 0 18px; color:var(--text2); }
+
+    /* ── iPhone/iPad ─────────────────────────────────── */
+    /* iOS zooms the page when a field with text under 16px gets focus */
+    @media (pointer: coarse) { input, select, textarea, .inline-input { font-size:16px !important; } }
+    /* Room for the notch / status bar when started from the Home Screen */
+    #app { padding-top: env(safe-area-inset-top); }
+    .modal-sheet { max-height: calc(88dvh - env(safe-area-inset-top)); }
+
     .cal-go-btn { font-size:12px; color:var(--accent); font-weight:500; cursor:pointer; text-decoration:none; background:none; border:none; font-family:var(--font); padding:0; }
   </style>
 </head>
 <body>
 <div id="app">
+  <div id="sync-banner" class="sync-banner"></div>
   <div id="screen-practice" class="screen active"></div>
   <div id="screen-history" class="screen"></div>
   <div id="screen-calendar" class="screen"></div>
@@ -391,6 +420,17 @@
   </div>
 </div>
 
+<!-- OneDrive conflict modal (no close-on-backdrop: a choice is required) -->
+<div id="modal-sync" class="modal-bg">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h2 style="font-size:17px;font-weight:600">Velg versjon</h2>
+    </div>
+    <div class="modal-body" id="modal-sync-body" style="padding-bottom:20px"></div>
+  </div>
+</div>
+
 <!-- Hidden file inputs (outside dynamic HTML to avoid double-trigger) -->
 <input id="input-excel"      type="file" accept=".xlsx" style="display:none" onchange="importExcel(this)">
 <input id="input-json"       type="file" accept=".json"  style="display:none" onchange="importJSON(this)">
@@ -440,13 +480,16 @@ async function idbClearHandle(){
 
 // --- Write all in-memory data to the connected JSON file ---
 let _saveFileTimer=null;
+let _fileError=false;
 async function saveToFile(){
   if(!fileHandle) return;
+  const seq=_changeSeq;
   try{
-    const data={students,exercises,sessions,templates,savedAt:new Date().toISOString()};
+    const data={students,exercises,sessions,templates,savedAt:new Date().toISOString(),savedFrom:deviceLabel()};
     const w=await fileHandle.createWritable();
     await w.write(JSON.stringify(data,null,2));
     await w.close();
+    if(!graphMode() && _changeSeq===seq) clearDirty();
     updateSyncDot('ok');
   }catch(err){
     console.error('saveToFile:',err);
@@ -454,22 +497,27 @@ async function saveToFile(){
     updateSyncDot('err');
   }
 }
+// Called by every save*() — debounced automatic sync
 function scheduleSaveToFile(){
-  const hasFile=!!fileHandle;
-  const hasGraph=!!graphAccount();
-  if(!hasFile&&!hasGraph) return;
   clearTimeout(_saveFileTimer);
-  _saveFileTimer=setTimeout(async()=>{
-    if(hasFile) await saveToFile();
-    if(hasGraph) await saveToGraph();
-  },600);
+  _saveFileTimer=setTimeout(flushSync,800);
+  updateSyncUI();
+}
+async function flushSync(){
+  clearTimeout(_saveFileTimer); _saveFileTimer=null;
+  if(localOnly){ updateSyncUI(); return; }
+  if(graphMode()){
+    // OneDrive login is used on this device: only send after we have compared with OneDrive this session
+    if(graphAccount() && graphReady && !graphConflict && isDirty()) await graphPush({});
+  } else if(fileHandle){
+    await saveToFile();
+  }
+  updateSyncUI();
 }
 function updateSyncDot(state){
-  const el=document.getElementById('sync-dot');
-  if(!el) return;
-  el.style.display = fileHandle ? 'inline-block' : 'none';
-  el.style.background = state==='ok' ? 'var(--green)' : '#FF453A';
-  el.title = state==='ok' ? 'Synkronisert med fil' : 'Lagringsfeil';
+  if(state==='err') _fileError=true;
+  else if(state==='ok') _fileError=false;
+  updateSyncUI();
 }
 
 // --- Load data from a given file handle (requests permission if needed) ---
@@ -485,9 +533,11 @@ async function loadFromHandle(handle){
   if(data.templates) templates=data.templates;
   // Mirror to localStorage so existing code keeps working
   lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
+  clearDirty(); // local data now equals the file
   fileHandle=handle;
   _pendingHandle=null;
   await idbSaveHandle(handle);
+  refreshPracticeAfterDataChange();
   updateSyncDot('ok');
   return true;
 }
@@ -536,6 +586,7 @@ async function reconnectPending(){
 // --- Called at startup: try to restore file handle from IndexedDB ---
 async function tryAutoConnect(){
   if(!fsaSupported) return;
+  if(graphMode()) return; // OneDrive login is the sync method on this device — never mix the two
   try{
     const h=await idbLoadHandle();
     if(!h) return;
@@ -557,7 +608,6 @@ async function tryAutoConnect(){
 // Brukeren logger inn via Microsoft-redirect, token lagres i localStorage.
 // =====================================================================
 const GRAPH_REDIRECT_URI = 'https://ronnylauten.github.io/slagverk/slagverk_app.html';
-const GRAPH_FILE_PATH    = '/me/drive/root:/Slagverk/slagverk_data.json:/content';
 const GRAPH_SCOPE        = 'Files.ReadWrite offline_access';
 const MS_AUTH_URL        = 'https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize';
 const MS_TOKEN_URL       = 'https://login.microsoftonline.com/consumers/oauth2/v2.0/token';
@@ -592,9 +642,9 @@ async function signInMicrosoft(){
 async function handleOAuthCallback(){
   const p=new URLSearchParams(window.location.search);
   const code=p.get('code'), state=p.get('state'), error=p.get('error');
-  if(error){ toast('Innlogging feilet: '+(p.get('error_description')||error)); window.history.replaceState({},'',window.location.pathname); return; }
-  if(!code) return;
-  if(state!==sessionStorage.getItem('pkce_s')){ toast('Ugyldig state — prøv igjen'); return; }
+  if(error){ toast('Innlogging feilet: '+(p.get('error_description')||error)); window.history.replaceState({},'',window.location.pathname); return false; }
+  if(!code) return false;
+  if(state!==sessionStorage.getItem('pkce_s')){ toast('Ugyldig state — prøv igjen'); window.history.replaceState({},'',window.location.pathname); return false; }
   const verifier=sessionStorage.getItem('pkce_v');
   sessionStorage.removeItem('pkce_v'); sessionStorage.removeItem('pkce_s');
   window.history.replaceState({},'',window.location.pathname);
@@ -602,14 +652,17 @@ async function handleOAuthCallback(){
   const resp=await fetch(MS_TOKEN_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
     body:new URLSearchParams({client_id:cid,code,redirect_uri:GRAPH_REDIRECT_URI,
       grant_type:'authorization_code',code_verifier:verifier})});
-  if(!resp.ok){ const e=await resp.json(); toast('Token-feil: '+(e.error_description||e.error)); return; }
+  if(!resp.ok){ const e=await resp.json().catch(()=>({})); toast('Token-feil: '+(e.error_description||e.error||resp.status)); return false; }
   const t=await resp.json();
   localStorage.setItem('ms_access_token',t.access_token);
   if(t.refresh_token) localStorage.setItem('ms_refresh_token',t.refresh_token);
   localStorage.setItem('ms_token_expiry',Date.now()+(t.expires_in*1000));
+  lsSet(K.wasIn,'1');
   await _fetchGraphUsername(t.access_token);
-  await loadFromGraph();
+  // Compare with OneDrive instead of blindly downloading: unsent local changes are never silently lost
+  await graphCheck('login');
   renderSettings();
+  return true;
 }
 
 // --- Get a valid access token, refreshing if needed ---
@@ -620,10 +673,15 @@ async function getGraphToken(){
   if(Date.now()<expiry-300000) return token; // still valid
   const refresh=localStorage.getItem('ms_refresh_token');
   if(!refresh){ localStorage.removeItem('ms_access_token'); return null; }
+  // Network errors are thrown (→ "kunne ikke synkronisere"), not treated as a logout
   const resp=await fetch(MS_TOKEN_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
     body:new URLSearchParams({client_id:graphClientId(),grant_type:'refresh_token',
       refresh_token:refresh,scope:GRAPH_SCOPE})});
-  if(!resp.ok){ localStorage.removeItem('ms_access_token'); localStorage.removeItem('ms_refresh_token'); return null; }
+  if(resp.status===400||resp.status===401){
+    // Refresh token expired/revoked (personal Microsoft accounts: about 24 h for browser apps)
+    localStorage.removeItem('ms_access_token'); localStorage.removeItem('ms_refresh_token'); return null;
+  }
+  if(!resp.ok) throw new Error('Token-fornying feilet (HTTP '+resp.status+')');
   const t=await resp.json();
   localStorage.setItem('ms_access_token',t.access_token);
   if(t.refresh_token) localStorage.setItem('ms_refresh_token',t.refresh_token);
@@ -639,56 +697,406 @@ async function _fetchGraphUsername(token){
 }
 
 async function signOutMicrosoft(){
+  if(isDirty() && !confirm('Denne enheten har endringer som ikke er sendt til OneDrive.\n\nLogge ut likevel? Endringene blir liggende bare på denne enheten.')) return;
   localStorage.removeItem('ms_access_token'); localStorage.removeItem('ms_refresh_token');
   localStorage.removeItem('ms_token_expiry'); localStorage.removeItem('ms_username');
-  updateSyncDot(null);
+  lsSet(K.wasIn,null); lsSet(K.etag,null);
+  graphReady=false; graphConflict=null; graphError='';
+  updateSyncUI();
   renderSettings();
   toast('Logget ut av Microsoft');
 }
 
-async function loadFromGraph(){
-  const token=await getGraphToken();
-  if(!token) return;
+// =====================================================================
+// ONEDRIVE SYNC ENGINE
+// Rules that protect newer data on another device from being overwritten:
+//  1. When the app opens (and when it comes back to the foreground) it checks OneDrive first.
+//  2. Automatic uploads only happen after that check, and always with If-Match on the eTag
+//     we last saw. If another device has saved in between, OneDrive answers 412 and we ask.
+//  3. Local changes not yet sent are remembered across reloads, and sent at the next chance.
+//  4. Before local unsent changes are replaced by a download, a backup copy is kept.
+// =====================================================================
+const GRAPH_ITEM_URL='https://graph.microsoft.com/v1.0/me/drive/root:/Slagverk/slagverk_data.json';
+const K={ etag:'rl_graph_etag', savedAt:'rl_graph_saved_at', savedFrom:'rl_graph_saved_from', dirty:'rl_dirty',
+          changedAt:'rl_local_changed_at', backup:'rl_local_backup', wasIn:'rl_graph_was_logged_in' };
+let graphReady=false;     // true once this session has compared with OneDrive
+let graphConflict=null;   // {meta, remote} when both OneDrive and this device have changes
+let graphError='';        // last network/HTTP error text
+let graphChecking=false;
+let localOnly=false;      // automatic sync paused (after "slett alle data" / declined import / "avgjør senere")
+let _changeSeq=0;
+let _lastGraphCheck=0;
+let _graphChain=Promise.resolve();
+function graphQueue(fn){ const p=_graphChain.then(()=>fn()); _graphChain=p.catch(()=>{}); return p; }
+
+function lsStr(k){ try{ return localStorage.getItem(k); }catch{ return null; } }
+function lsSet(k,v){ try{ if(v==null||v==='') localStorage.removeItem(k); else localStorage.setItem(k,v); }catch(e){ console.warn('localStorage:',e); } }
+function isDirty(){ return lsStr(K.dirty)==='1'; }
+function markLocalChange(){ _changeSeq++; lsSet(K.dirty,'1'); lsSet(K.changedAt,new Date().toISOString()); }
+function clearDirty(){ lsSet(K.dirty,null); }
+// OneDrive login is (or has been) used on this device → it is the only sync method here
+function graphMode(){ return !!graphAccount() || lsStr(K.wasIn)==='1'; }
+function hasAnyData(d){ d=d||{students,exercises,sessions,templates}; return !!((d.students||[]).length||(d.sessions||[]).length||(d.exercises||[]).length||(d.templates||[]).length); }
+
+function deviceLabel(){
+  const ua=navigator.userAgent;
+  if(/iPhone/.test(ua)) return 'iPhone';
+  if(/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints>1)) return 'iPad';
+  if(/Android/.test(ua)) return 'Android';
+  if(/Windows/.test(ua)) return 'PC';
+  if(/Macintosh/.test(ua)) return 'Mac';
+  return 'annen enhet';
+}
+function fmtStamp(iso){
+  if(!iso) return '';
+  try{ return new Date(iso).toLocaleString('no-NO',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch{ return iso; }
+}
+function dataSummary(d){ return `${(d.students||[]).length} elever · ${(d.sessions||[]).length} økter · ${(d.exercises||[]).length} øvelser`; }
+
+// --- Local backup (one slot) ---
+function backupLocal(reason){
+  if(!hasAnyData()) return;
+  try{ localStorage.setItem(K.backup, JSON.stringify({at:new Date().toISOString(),reason,from:deviceLabel(),data:{students,exercises,sessions,templates}})); }
+  catch(e){ console.warn('Backup feilet (lagring full?)',e); }
+}
+function getBackup(){ try{ return JSON.parse(lsStr(K.backup)||'null'); }catch{ return null; } }
+function restoreBackup(){
+  const b=getBackup();
+  if(!b?.data){ toast('Ingen backup funnet'); return; }
+  const target=graphMode()?' og sendes til OneDrive':(fileHandle?' og lagres til datafilen':'');
+  if(!confirm(`Gjenopprette backup fra ${fmtStamp(b.at)}?\n(${b.reason||''})\n\nBackup: ${dataSummary(b.data)}\nNå: ${dataSummary({students,sessions,exercises})}\n\nDataene på denne enheten erstattes${target}. Det som ligger her nå blir den nye backupen.`)) return;
+  backupLocal('Før gjenoppretting av backup');
+  students=b.data.students||[]; exercises=b.data.exercises||[]; sessions=b.data.sessions||[]; templates=b.data.templates||[];
+  lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
+  markLocalChange();
+  localOnly=false; graphConflict=null;
+  refreshPracticeAfterDataChange();
+  toast('Backup gjenopprettet');
+  renderCurrentTab();
+  if(graphMode()){ if(graphAccount()) graphPush({force:true,silent:false}); }
+  else if(fileHandle) saveToFile();
+  updateSyncUI();
+}
+
+// Replace all in-memory + localStorage data (no automatic upload)
+function applyData(data){
+  students=data.students||[]; exercises=data.exercises||[]; sessions=data.sessions||[]; templates=data.templates||[];
+  lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
+  refreshPracticeAfterDataChange();
+  renderCurrentTab();
+}
+function renderCurrentTab(){
+  const f={practice:renderPractice,history:renderHistory,calendar:renderCalendar,books:renderBooks,settings:renderSettings}[currentTab];
+  if(f) f();
+}
+
+// --- Graph requests ---
+class GraphAuthError extends Error{}
+async function graphToken(){ const t=await getGraphToken(); if(!t) throw new GraphAuthError('logged-out'); return t; }
+async function graphGetMeta(token){
+  const r=await fetch(GRAPH_ITEM_URL,{headers:{Authorization:'Bearer '+token},cache:'no-store'});
+  if(r.status===404) return {exists:false};
+  if(r.status===401) throw new GraphAuthError('401');
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const j=await r.json();
+  return {exists:true, etag:j.eTag, modified:j.lastModifiedDateTime, downloadUrl:j['@microsoft.graph.downloadUrl']};
+}
+async function graphDownload(token,meta){
+  let r=null;
+  if(meta.downloadUrl){ try{ r=await fetch(meta.downloadUrl,{cache:'no-store'}); }catch(e){ r=null; } }
+  if(!r||!r.ok) r=await fetch(GRAPH_ITEM_URL+':/content',{headers:{Authorization:'Bearer '+token},cache:'no-store'});
+  if(r.status===401) throw new GraphAuthError('401');
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return await r.json();
+}
+function handleGraphError(e){
+  console.warn('OneDrive:',e);
+  if(e instanceof GraphAuthError){
+    graphReady=false;
+    if(e.message==='401'){ lsSet('ms_token_expiry','0'); graphError='Innloggingen må fornyes — prøv igjen'; }
+    else graphError='';
+  } else {
+    graphError = navigator.onLine===false ? 'Ingen nettverkstilkobling' : (e.message||'Ukjent feil');
+  }
+  updateSyncUI();
+  if(currentTab==='settings') renderSettings();
+}
+
+// Take the OneDrive version (backs up local data first if it has unsent changes)
+function pullApply(remote,meta){
+  if(hasAnyData() && (isDirty() || !lsStr(K.etag))) backupLocal('Før henting fra OneDrive');
+  applyData(remote);
+  lsSet(K.etag,meta.etag);
+  lsSet(K.savedAt,remote.savedAt||meta.modified||'');
+  lsSet(K.savedFrom,remote.savedFrom||'');
+  clearDirty();
+  graphReady=true; graphConflict=null; graphError=''; localOnly=false;
+  updateSyncUI();
+}
+
+// Compare with OneDrive: pull if only OneDrive changed, push if only we changed, ask if both changed
+function graphCheck(reason){ return graphQueue(()=>_graphCheck(reason)); }
+async function _graphCheck(reason){
+  if(!graphAccount()){ updateSyncUI(); return; }
+  if(localOnly && reason!=='manual'){ updateSyncUI(); return; }
+  graphChecking=true; updateSyncUI();
   try{
-    const resp=await fetch('https://graph.microsoft.com/v1.0'+GRAPH_FILE_PATH,{headers:{'Authorization':'Bearer '+token}});
-    if(resp.status===404){ toast('Ingen datafil i OneDrive ennå — lagres ved neste sending'); return; }
-    if(!resp.ok) throw new Error('HTTP '+resp.status);
-    const data=await resp.json();
-    if(data.students)  students=data.students;
-    if(data.exercises) exercises=data.exercises;
-    if(data.sessions)  sessions=data.sessions;
-    if(data.templates) templates=data.templates;
-    lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
-    if(data.savedAt) localStorage.setItem('rl_graph_saved_at', JSON.stringify(data.savedAt));
-    updateSyncDot('ok');
-    toast('☁️ Hentet fra OneDrive');
-    renderPractice(); renderSettings();
-  }catch(e){ toast('Feil ved lesing fra OneDrive: '+e.message); updateSyncDot('err'); }
+    const token=await graphToken();
+    const meta=await graphGetMeta(token);
+    _lastGraphCheck=Date.now(); graphError='';
+    if(!meta.exists){
+      graphReady=true;
+      if(hasAnyData()) await _graphPush({force:true});
+      return;
+    }
+    const known=lsStr(K.etag);
+    if(known && meta.etag===known){
+      graphReady=true;
+      if(isDirty()) await _graphPush({});
+      return;
+    }
+    // OneDrive has changed since our last sync (or this device has never synced)
+    const remote=await graphDownload(token,meta);
+    if(remote.savedAt && remote.savedAt===lsStr(K.savedAt)){
+      // Same content as we last saved — only the eTag moved
+      lsSet(K.etag,meta.etag); graphReady=true;
+      if(isDirty()) await _graphPush({});
+      return;
+    }
+    if(!isDirty() || !hasAnyData()){
+      const hadData=hasAnyData();
+      pullApply(remote,meta);
+      if(hadData||reason==='manual'||reason==='login') toast(`☁️ Oppdatert fra OneDrive (${remote.savedFrom||'annen enhet'}, ${fmtStamp(remote.savedAt||meta.modified)})`);
+      return;
+    }
+    // Both sides have changes → let the user decide
+    graphReady=false;
+    graphConflict={meta,remote};
+    openSyncConflict();
+  }catch(e){ handleGraphError(e); }
+  finally{ graphChecking=false; updateSyncUI(); if(currentTab==='settings') renderSettings(); }
+}
+
+// Upload. Without force, If-Match makes OneDrive refuse (412) if another device has saved since.
+function graphPush(opts){ return graphQueue(()=>_graphPush(opts||{})); }
+async function _graphPush({force=false,silent=true,retried=false}={}){
+  if(!graphAccount()) return false;
+  const seq=_changeSeq;
+  try{
+    const token=await graphToken();
+    const savedAt=new Date().toISOString(), savedFrom=deviceLabel();
+    const body=JSON.stringify({students,exercises,sessions,templates,savedAt,savedFrom},null,2);
+    const headers={Authorization:'Bearer '+token,'Content-Type':'application/json'};
+    const known=lsStr(K.etag);
+    if(!force && known) headers['If-Match']=known;
+    const r=await fetch(GRAPH_ITEM_URL+':/content',{method:'PUT',headers,body,cache:'no-store'});
+    if(r.status===412){
+      graphReady=false;
+      const meta=await graphGetMeta(token);
+      const remote=meta.exists?await graphDownload(token,meta):null;
+      if(!retried && remote && remote.savedAt && remote.savedAt===lsStr(K.savedAt)){
+        lsSet(K.etag,meta.etag); graphReady=true;
+        return await _graphPush({force,silent,retried:true});
+      }
+      if(!remote){ return await _graphPush({force:true,silent,retried:true}); }
+      graphConflict={meta,remote};
+      openSyncConflict();
+      return false;
+    }
+    if(r.status===401) throw new GraphAuthError('401');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const item=await r.json().catch(()=>({}));
+    lsSet(K.etag,item.eTag||'');
+    lsSet(K.savedAt,savedAt); lsSet(K.savedFrom,savedFrom);
+    if(_changeSeq===seq) clearDirty();
+    graphReady=true; graphError=''; graphConflict=null; localOnly=false;
+    if(!silent) toast('☁️ Sendt til OneDrive');
+    if(isDirty()) scheduleSaveToFile(); // more changes arrived during the upload
+    return true;
+  }catch(e){ handleGraphError(e); return false; }
+  finally{ updateSyncUI(); if(currentTab==='settings') renderSettings(); }
+}
+
+// --- Manual buttons ---
+async function loadFromGraph(){
+  if(!graphAccount()){ toast('Logg inn på OneDrive først'); return; }
+  if(isDirty() && !confirm('Denne enheten har endringer som ikke er sendt til OneDrive.\n\nHente fra OneDrive likevel?\nEndringene her tas vare på som backup (Innstillinger → Data).')) return;
+  await graphQueue(async()=>{
+    graphChecking=true; updateSyncUI();
+    try{
+      const token=await graphToken();
+      const meta=await graphGetMeta(token);
+      if(!meta.exists){ toast('Ingen datafil i OneDrive ennå'); graphReady=true; localOnly=false; return; }
+      const remote=await graphDownload(token,meta);
+      pullApply(remote,meta);
+      toast(`☁️ Hentet fra OneDrive (${remote.savedFrom||'annen enhet'}, ${fmtStamp(remote.savedAt||meta.modified)})`);
+    }catch(e){ handleGraphError(e); }
+    finally{ graphChecking=false; updateSyncUI(); }
+  });
+  closeSyncModal();
+  renderCurrentTab();
 }
 
 async function pushToOneDrive(){
-  if(!confirm('Send nåværende data til OneDrive?\n\nDette vil overskrive det som ligger der fra andre enheter.')) return;
-  await saveToGraph();
-  toast('☁️ Data sendt til OneDrive');
+  if(!graphAccount()){ toast('Logg inn på OneDrive først'); return; }
+  await graphQueue(async()=>{
+    try{
+      const token=await graphToken();
+      const meta=await graphGetMeta(token);
+      if(meta.exists && meta.etag!==lsStr(K.etag)){
+        const remote=await graphDownload(token,meta);
+        if(!(remote.savedAt && remote.savedAt===lsStr(K.savedAt))){
+          const msg=`OneDrive har endringer som ikke finnes på denne enheten:\n\n`+
+            `☁️ OneDrive: lagret fra ${remote.savedFrom||'annen enhet'}, ${fmtStamp(remote.savedAt||meta.modified)}\n   ${dataSummary(remote)}\n\n`+
+            `📱 Denne enheten: ${dataSummary({students,sessions,exercises})}\n\n`+
+            `Overskrive OneDrive med dataene på denne enheten?`;
+          if(!confirm(msg)) return;
+        }
+      }
+      await _graphPush({force:true,silent:false});
+    }catch(e){ handleGraphError(e); }
+  });
+  closeSyncModal();
+  renderCurrentTab();
 }
 
-async function saveToGraph(){
-  const token=await getGraphToken();
-  if(!token) return;
-  try{
-    const savedAt=new Date().toISOString();
-    const data={students,exercises,sessions,templates,savedAt};
-    const resp=await fetch('https://graph.microsoft.com/v1.0'+GRAPH_FILE_PATH,{
-      method:'PUT',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-      body:JSON.stringify(data,null,2)});
-    if(!resp.ok) throw new Error('HTTP '+resp.status);
-    localStorage.setItem('rl_graph_saved_at', JSON.stringify(savedAt));
-    updateSyncDot('ok');
-    // Update timestamp label if visible
-    const el=document.getElementById('od-saved-at');
-    if(el) el.textContent='Sist lagret: '+new Date(savedAt).toLocaleString('no-NO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  }catch(e){ toast('Feil ved lagring til OneDrive: '+e.message); updateSyncDot('err'); }
+// --- Conflict dialog ---
+function sessionDiff(localS,remoteS){
+  const rm=new Map((remoteS||[]).map(s=>[s.id,s]));
+  const lm=new Map((localS||[]).map(s=>[s.id,s]));
+  const onlyLocal=(localS||[]).filter(s=>!rm.has(s.id));
+  const onlyRemote=(remoteS||[]).filter(s=>!lm.has(s.id));
+  const changed=(localS||[]).filter(s=>rm.has(s.id) && JSON.stringify(s)!==JSON.stringify(rm.get(s.id)));
+  return {onlyLocal,onlyRemote,changed};
 }
+function sessLine(s,studList){
+  const st=(studList||[]).find(x=>x.id===s.elevId)||getStudent(s.elevId);
+  return `${st?.navn||'Ukjent'} — ${fmtDate(s.dato)}`;
+}
+function openSyncConflict(){
+  const c=graphConflict; if(!c) return;
+  const r=c.remote||{};
+  const d=sessionDiff(sessions,r.sessions);
+  const list=(arr,studs)=>arr.length?`<ul class="sync-list">${arr.slice(0,6).map(s=>`<li>${esc(sessLine(s,studs))}</li>`).join('')}${arr.length>6?`<li>… og ${arr.length-6} til</li>`:''}</ul>`:'';
+  const diffHtml=`
+    <div class="sync-diff">
+      ${d.onlyLocal.length?`<div><b>Økter som bare finnes her (${d.onlyLocal.length}):</b>${list(d.onlyLocal,students)}</div>`:''}
+      ${d.onlyRemote.length?`<div><b>Økter som bare finnes i OneDrive (${d.onlyRemote.length}):</b>${list(d.onlyRemote,r.students)}</div>`:''}
+      ${d.changed.length?`<div><b>Økter endret begge steder (${d.changed.length}):</b>${list(d.changed,students)}</div>`:''}
+      ${!d.onlyLocal.length&&!d.onlyRemote.length&&!d.changed.length?`<div>Øktene er like — forskjellen ligger i elever, bøker eller maler.</div>`:''}
+    </div>`;
+  document.getElementById('modal-sync-body').innerHTML=`
+    <div style="font-size:14px;color:var(--text2);margin-bottom:14px">Både OneDrive og denne enheten har endringer siden sist de var synkronisert. Velg hvilken versjon som skal gjelde.</div>
+    <div class="sync-cmp">
+      <div class="sync-cmp-box">
+        <div class="sync-cmp-title">☁️ OneDrive</div>
+        <div>Lagret fra <b>${esc(r.savedFrom||'annen enhet')}</b></div>
+        <div class="sync-cmp-time">${esc(fmtStamp(r.savedAt||c.meta?.modified))}</div>
+        <div class="sync-cmp-sum">${esc(dataSummary(r))}</div>
+      </div>
+      <div class="sync-cmp-box">
+        <div class="sync-cmp-title">📱 Denne enheten</div>
+        <div>Endret på <b>${esc(deviceLabel())}</b></div>
+        <div class="sync-cmp-time">${esc(fmtStamp(lsStr(K.changedAt)))}</div>
+        <div class="sync-cmp-sum">${esc(dataSummary({students,sessions,exercises}))}</div>
+      </div>
+    </div>
+    ${diffHtml}
+    <button class="btn btn-full sync-btn-down" onclick="resolveConflict('remote')">☁️↓ Bruk OneDrive-versjonen</button>
+    <div class="sync-hint">Endringene på denne enheten tas vare på som backup (Innstillinger → Data).</div>
+    <button class="btn btn-full sync-btn-up" onclick="resolveConflict('local')">📱↑ Bruk versjonen på denne enheten</button>
+    <div class="sync-hint">Overskriver det som ligger i OneDrive.</div>
+    <button class="btn btn-ghost btn-full btn-sm" style="margin-top:6px" onclick="resolveConflict('later')">Avgjør senere (automatisk synk stoppes)</button>
+  `;
+  document.getElementById('modal-sync').classList.add('open');
+  updateSyncUI();
+}
+function closeSyncModal(){ document.getElementById('modal-sync')?.classList.remove('open'); }
+async function resolveConflict(choice){
+  const c=graphConflict;
+  closeSyncModal();
+  if(!c){ graphCheck('manual'); return; }
+  if(choice==='remote'){
+    pullApply(c.remote,c.meta);
+    toast('☁️ OneDrive-versjonen brukes — lokal backup er tatt');
+  } else if(choice==='local'){
+    graphConflict=null;
+    await graphPush({force:true,silent:false});
+  } else {
+    localOnly=true;
+    toast('Automatisk synk er stoppet til du velger versjon');
+  }
+  updateSyncUI();
+  renderCurrentTab();
+}
+
+// --- Sync status: dot on the settings tab + banner at the top ---
+function syncState(){
+  if(graphMode()){
+    if(!graphAccount()) return 'loggedout';
+    if(graphConflict) return 'conflict';
+    if(localOnly) return 'paused';
+    if(graphError) return 'error';
+    if(graphChecking || !graphReady) return 'checking';
+    return isDirty()?'pending':'ok';
+  }
+  if(localOnly) return 'paused';
+  if(fileHandle) return _fileError?'error':(isDirty()?'pending':'ok');
+  return 'local';
+}
+const SYNC_TEXT={
+  ok:'✅ Alt er synkronisert',
+  pending:'⏳ Endringer venter på sending',
+  checking:'🔄 Sjekker OneDrive…',
+  conflict:'⚠️ OneDrive og denne enheten har ulike endringer',
+  paused:'⏸ Automatisk synk er stoppet',
+  error:'⚠️ Kunne ikke synkronisere',
+  loggedout:'⚠️ Logget ut av OneDrive',
+  local:'Data lagres bare på denne enheten'
+};
+function updateSyncUI(){
+  const st=syncState();
+  const dot=document.getElementById('sync-dot');
+  if(dot){
+    dot.style.display = st==='local' ? 'none' : 'inline-block';
+    dot.style.background = st==='ok' ? 'var(--green)' : (st==='pending'||st==='checking') ? 'var(--yellow)' : 'var(--red)';
+    dot.title = SYNC_TEXT[st]||'';
+  }
+  const b=document.getElementById('sync-banner');
+  if(!b) return;
+  let html='';
+  if(st==='loggedout'){
+    html=`<span>⚠️ Logget ut av OneDrive — endringer lagres bare på denne enheten${isDirty()?' (har usendte endringer)':''}.</span><button class="btn btn-sm btn-primary" onclick="bannerLogin()">Logg inn</button>`;
+  } else if(st==='conflict'){
+    html=`<span>⚠️ OneDrive og denne enheten har ulike endringer.</span><button class="btn btn-sm btn-primary" onclick="openSyncConflict()">Velg versjon</button>`;
+  } else if(st==='paused'){
+    html = graphMode()
+      ? `<span>⏸ Automatisk synk er stoppet. OneDrive er ikke endret.</span><span style="display:flex;gap:6px"><button class="btn btn-sm btn-secondary" onclick="loadFromGraph()">☁️↓ Hent</button><button class="btn btn-sm btn-secondary" onclick="pushToOneDrive()">☁️↑ Send</button></span>`
+      : `<span>⏸ Lagring til datafil er stoppet. Filen er ikke endret.</span><button class="btn btn-sm btn-secondary" onclick="manualSaveToFile()">💾 Lagre til fil</button>`;
+  } else if(st==='error'){
+    html=`<span>⚠️ Kunne ikke synkronisere${graphError?' ('+esc(graphError)+')':''}. Endringene er lagret på enheten.</span><button class="btn btn-sm btn-secondary" onclick="graphCheck('manual')">Prøv igjen</button>`;
+  }
+  b.innerHTML=html;
+  b.style.display=html?'flex':'none';
+}
+function bannerLogin(){
+  if(!graphClientId()){ switchTab('settings'); toast('Lim inn Client ID under OneDrive'); return; }
+  signInMicrosoft();
+}
+async function manualSaveToFile(){
+  localOnly=false;
+  await saveToFile();
+  toast('Lagret til fil');
+  renderCurrentTab();
+}
+
+// Check again when the app returns to the foreground (iOS keeps the page alive in the background)
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'){ if(_saveFileTimer) flushSync(); }
+  else if(graphAccount() && Date.now()-_lastGraphCheck>30000) graphCheck('resume');
+});
+window.addEventListener('pageshow',e=>{ if(e.persisted && graphAccount()) graphCheck('resume'); });
+window.addEventListener('online',()=>{ if(graphAccount()) graphCheck('online'); });
 
 // =====================================================================
 // DATA LAYER
@@ -696,18 +1104,21 @@ async function saveToGraph(){
 let students=[], exercises=[], sessions=[], templates=[];
 
 function lsGet(k){ try{return JSON.parse(localStorage.getItem(k))||[];}catch{return[];} }
-function lsSave(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+function lsSave(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ console.error('lsSave',e); toast('⚠️ Klarte ikke å lagre på enheten (lagring full?)'); } }
 function loadAll(){ students=lsGet(LS.S); exercises=lsGet(LS.E); sessions=lsGet(LS.X); templates=lsGet(LS.T); }
-function saveStudents(){ lsSave(LS.S,students); scheduleSaveToFile(); }
-function saveExercises(){ lsSave(LS.E,exercises); scheduleSaveToFile(); }
-function saveSessions(){ lsSave(LS.X,sessions); scheduleSaveToFile(); }
-function saveTemplates(){ lsSave(LS.T,templates); scheduleSaveToFile(); }
+// Every save marks "unsent local changes" (remembered across reloads) and schedules a sync
+function saveStudents(){ lsSave(LS.S,students); markLocalChange(); scheduleSaveToFile(); }
+function saveExercises(){ lsSave(LS.E,exercises); markLocalChange(); scheduleSaveToFile(); }
+function saveSessions(){ lsSave(LS.X,sessions); markLocalChange(); scheduleSaveToFile(); }
+function saveTemplates(){ lsSave(LS.T,templates); markLocalChange(); scheduleSaveToFile(); }
 
 // =====================================================================
 // HELPERS
 // =====================================================================
 function uid(){ return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2); }
-function todayStr(){ return new Date().toISOString().slice(0,10); }
+// Local date as YYYY-MM-DD (toISOString() is UTC and gives yesterday's date between 00:00 and 02:00 in Norway)
+function localDateStr(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function todayStr(){ return localDateStr(new Date()); }
 function nextOccurrence(dag){
   const map={mandag:1,tirsdag:2,onsdag:3,torsdag:4,fredag:5,lørdag:6,søndag:0};
   const target=map[(dag||'').toLowerCase()];
@@ -716,10 +1127,29 @@ function nextOccurrence(dag){
   let diff=target-now.getDay();
   if(diff<0) diff+=7;
   const d=new Date(now); d.setDate(now.getDate()+diff);
-  return d.toISOString().slice(0,10);
+  return localDateStr(d);
 }
 function fmtDate(d){ if(!d)return''; try{ return new Date(d+'T12:00').toLocaleDateString('no-NO',{day:'numeric',month:'long',year:'numeric'}); }catch{return d;} }
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+// For values placed inside a single-quoted JS string in an onclick attribute (handles names like "Children's …")
+function jsq(s){ return esc(String(s??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")); }
+// Students sorted by weekday, then start time; students without a day come last
+const DAY_ORDER={mandag:1,tirsdag:2,onsdag:3,torsdag:4,fredag:5,lørdag:6,søndag:7};
+function sortStudents(list){
+  return list.slice().sort((a,b)=>{
+    const da=DAY_ORDER[(a.defaultDag||'').toLowerCase()]??99;
+    const db=DAY_ORDER[(b.defaultDag||'').toLowerCase()]??99;
+    if(da!==db) return da-db;
+    const ta=(a.defaultTid||'').split(/[-–]/)[0].trim();
+    const tb=(b.defaultTid||'').split(/[-–]/)[0].trim();
+    if(ta!==tb) return ta.localeCompare(tb);
+    return (a.navn||'').localeCompare(b.navn||'','no');
+  });
+}
+function studentLabel(s){
+  const parts=[s.defaultDag,s.defaultTid].filter(Boolean);
+  return (s.navn||'')+(parts.length?` (${parts.join(' ')})`:'');
+}
 function getStudent(id){ return students.find(s=>s.id===id); }
 function getExercise(id){ return exercises.find(e=>e.id===id); }
 function exLabel(item){
@@ -771,7 +1201,8 @@ let settingsEditAktiv=true;
 // =====================================================================
 // TOAST
 // =====================================================================
-function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2400); }
+let _toastTimer=null;
+function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(_toastTimer); _toastTimer=setTimeout(()=>el.classList.remove('show'),Math.max(2400,String(msg).length*60)); }
 
 // =====================================================================
 // NAVIGATION
@@ -791,37 +1222,44 @@ function switchTab(tab){
 // PRACTICE SCREEN
 // =====================================================================
 function newPracticeState(){
-  const active=students.filter(s=>s.aktiv!==false);
+  const active=sortStudents(students.filter(s=>s.aktiv!==false));
   const first=active[0]||null;
-  return {
+  const ps={
     studentId: first?.id||null,
     date: first?.defaultDag ? nextOccurrence(first.defaultDag) : todayStr(),
     time: first?.defaultTid||'',
     categories: initCats(),
     sessionId: null
   };
+  // If this student already has a session on the suggested date, open it (prevents duplicate sessions)
+  if(ps.studentId){
+    const existing=sessions.find(s=>s.elevId===ps.studentId&&s.dato===ps.date);
+    if(existing) fillPracticeFromSession(ps,existing);
+  }
+  return ps;
 }
+
+// Tracks unsaved changes in the Practice form, so a background sync never throws them away
+let practiceDirty=false;
+function markPracticeDirty(){ practiceDirty=true; }
 
 function renderPractice(){
   if(!practiceState) practiceState=newPracticeState();
   const ps=practiceState;
 
-  const DAY_ORDER={mandag:1,tirsdag:2,onsdag:3,torsdag:4,fredag:5,lørdag:6,søndag:7,'':99};
-  const activeStudents=students.filter(s=>s.aktiv!==false).slice().sort((a,b)=>{
-    const da=DAY_ORDER[(a.defaultDag||'').toLowerCase()]??99;
-    const db=DAY_ORDER[(b.defaultDag||'').toLowerCase()]??99;
-    if(da!==db) return da-db;
-    const ta=(a.defaultTid||'').split(/[-–]/)[0].trim();
-    const tb=(b.defaultTid||'').split(/[-–]/)[0].trim();
-    return ta.localeCompare(tb);
-  });
-  const studOpts = activeStudents.map(s=>{
-    const parts=[];
-    if(s.defaultDag) parts.push(s.defaultDag);
-    if(s.defaultTid) parts.push(s.defaultTid);
-    const suffix=parts.length?` (${parts.join(' ')})` :'';
-    return `<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(s.navn)}${esc(suffix)}</option>`;
-  }).join('');
+  const activeStudents=sortStudents(students.filter(s=>s.aktiv!==false));
+  // The selected student may have been deleted or set inactive — fall back to the first active one
+  if(ps.studentId && !activeStudents.some(s=>s.id===ps.studentId)){
+    practiceState=newPracticeState(); practiceDirty=false;
+    return renderPractice();
+  }
+  if(!ps.studentId && activeStudents.length){
+    practiceState=newPracticeState(); practiceDirty=false;
+    return renderPractice();
+  }
+  const studOpts = activeStudents.map(s=>
+    `<option value="${esc(s.id)}" ${s.id===ps.studentId?'selected':''}>${esc(studentLabel(s))}</option>`
+  ).join('');
 
   const catsHtml = CATS.map(cat=>{
     const data=ps.categories[cat];
@@ -838,7 +1276,7 @@ function renderPractice(){
         const ex=getExercise(item.exerciseId);
         if(ex&&ex.bokKort&&ex.side!=null){
           const nextEx=findNextExercise(ex);
-          if(nextEx) nextHint=`<div class="next-page-hint">→ Neste: ${esc(nextEx.bokKort)} s.${nextEx.side} — ${esc(nextEx.øvelse)} <button onclick="addNextPage('${esc(nextEx.id)}','${cat}')">＋</button></div>`;
+          if(nextEx) nextHint=`<div class="next-page-hint">→ Neste: ${esc(nextEx.bokKort)} s.${nextEx.side} — ${esc(nextEx.øvelse)} <button onclick="addNextPage('${jsq(nextEx.id)}','${cat}')">＋</button></div>`;
         }
       }
       return `<div class="ex-item">
@@ -892,7 +1330,7 @@ function renderPractice(){
       </div>
       <div class="form-row" style="padding-bottom:14px">
         <div class="form-group"><label>Dato</label><input type="date" value="${esc(ps.date)}" onchange="practiceSetDate(this.value)"></div>
-        <div class="form-group"><label>Tid</label><input type="text" placeholder="16:30–17:00" value="${esc(ps.time)}" oninput="practiceState.time=this.value"></div>
+        <div class="form-group"><label>Tid</label><input type="text" placeholder="16:30–17:00" value="${esc(ps.time)}" oninput="practiceState.time=this.value;markPracticeDirty()"></div>
       </div>
     </div>
     ${ps.sessionId?`<div class="edit-banner"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11.5 1.5L13.5 3.5L5 12H3V10L11.5 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Du redigerer øvingen fra <strong style="margin:0 3px">${fmtDate(ps.date)}</strong> — lagre for å oppdatere.</div>`:''}
@@ -905,10 +1343,10 @@ function renderPractice(){
   `;
 }
 
-// Load an existing session's exercises into practiceState (preserves done/homework flags)
-function loadSessionIntoPractice(sess){
-  practiceState.sessionId=sess.id;
-  if(sess.tid) practiceState.time=sess.tid;
+// Load an existing session's exercises into a practice state (preserves done/homework flags)
+function fillPracticeFromSession(ps,sess){
+  ps.sessionId=sess.id;
+  if(sess.tid) ps.time=sess.tid;
   CATS.forEach(cat=>{
     const planlagt=sess.kategorier?.[cat]?.planlagt||[];
     const gjennomgått=sess.kategorier?.[cat]?.gjennomgått||[];
@@ -917,10 +1355,28 @@ function loadSessionIntoPractice(sess){
       (item.exerciseId&&x.exerciseId&&item.exerciseId===x.exerciseId)||
       (!item.exerciseId&&item.text&&x.text===item.text)
     );
-    practiceState.categories[cat].items=planlagt.map(i=>({
+    ps.categories[cat].items=planlagt.map(i=>({
       ...i,id:uid(),done:matchItem(i,gjennomgått),homework:matchItem(i,lekse)
     }));
   });
+}
+function loadSessionIntoPractice(sess){
+  fillPracticeFromSession(practiceState,sess);
+  practiceDirty=false;
+}
+
+// After data has been replaced (e.g. fetched from OneDrive): bring the Practice form in line,
+// but never throw away changes the user has made in the form and not yet saved.
+function refreshPracticeAfterDataChange(){
+  if(!practiceState) return;
+  if(practiceDirty){
+    if(practiceState.sessionId && !sessions.some(s=>s.id===practiceState.sessionId)) practiceState.sessionId=null;
+    return;
+  }
+  if(!practiceState.studentId || !getStudent(practiceState.studentId)){ practiceState=newPracticeState(); return; }
+  const existing=sessions.find(s=>s.elevId===practiceState.studentId&&s.dato===practiceState.date);
+  if(existing) loadSessionIntoPractice(existing);
+  else { practiceState.sessionId=null; CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; }); }
 }
 
 // Called when the date field changes — loads existing session if one exists for this student+date
@@ -934,6 +1390,7 @@ function practiceSetDate(dateStr){
       // Was editing an old session; switched to a date with no session → blank mode
       practiceState.sessionId=null;
       CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; });
+      practiceDirty=false;
     }
   }
   renderPractice();
@@ -943,6 +1400,7 @@ function setPracticeStudent(id){
   practiceState.studentId=id;
   practiceState.sessionId=null;
   CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; });
+  practiceDirty=false;
   const st=getStudent(id);
   if(st){
     if(st.defaultTid) practiceState.time=st.defaultTid;
@@ -962,10 +1420,12 @@ function openPracticeForSession(studentId, dateStr){
   practiceState=newPracticeState();
   practiceState.studentId=studentId;
   practiceState.date=dateStr;
+  practiceState.sessionId=null;
+  CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; });
   const st=getStudent(studentId);
   if(st?.defaultTid) practiceState.time=st.defaultTid;
   const existing=sessions.find(s=>s.elevId===studentId&&s.dato===dateStr);
-  if(existing) loadSessionIntoPractice(existing);
+  if(existing) loadSessionIntoPractice(existing); else practiceDirty=false;
   catOpen={TEK:true,SD:true,Timp:true,Melodisk:true,Kit:true};
   catFreeText={TEK:false,SD:false,Timp:false,Melodisk:false,Kit:false};
   switchTab('practice');
@@ -993,26 +1453,28 @@ function copyLastSession(){
     );
     practiceState.categories[cat].items=planlagt.map(i=>({...i,id:uid(),done:matchItem(i,gjennomgått),homework:false}));
   });
+  markPracticeDirty();
   toast('Kopiert fra '+fmtDate(prevSess.dato));
   renderPractice();
 }
 function submitFreeText(cat){
   const el=document.getElementById('ft-'+cat);
   const text=(el?.value||'').trim();
-  if(text){ practiceState.categories[cat].items.push({id:uid(),type:'text',text,done:false,homework:false}); }
+  if(text){ practiceState.categories[cat].items.push({id:uid(),type:'text',text,done:false,homework:false}); markPracticeDirty(); }
   catFreeText[cat]=false;
   renderPractice();
 }
-function toggleDone(cat,idx){ practiceState.categories[cat].items[idx].done=!practiceState.categories[cat].items[idx].done; renderPractice(); }
+function toggleDone(cat,idx){ practiceState.categories[cat].items[idx].done=!practiceState.categories[cat].items[idx].done; markPracticeDirty(); renderPractice(); }
 function toggleHw(cat,idx){
   const item=practiceState.categories[cat].items[idx];
   if(!item.homework&&hwCount(cat)>=3){ toast('Maks 3 lekser per kategori'); return; }
-  item.homework=!item.homework; renderPractice();
+  item.homework=!item.homework; markPracticeDirty(); renderPractice();
 }
-function removeEx(cat,idx){ practiceState.categories[cat].items.splice(idx,1); renderPractice(); }
-function addNextPage(exId,cat){ practiceState.categories[cat].items.push({id:uid(),type:'db',exerciseId:exId,done:false,homework:false}); renderPractice(); }
+function removeEx(cat,idx){ practiceState.categories[cat].items.splice(idx,1); markPracticeDirty(); renderPractice(); }
+function addNextPage(exId,cat){ practiceState.categories[cat].items.push({id:uid(),type:'db',exerciseId:exId,done:false,homework:false}); markPracticeDirty(); renderPractice(); }
 function saveSession(){
   if(!practiceState.studentId){ toast('Velg en elev'); return; }
+  if(!practiceState.date){ toast('Velg en dato'); return; }
   const kategorier={};
   CATS.forEach(cat=>{
     const items=practiceState.categories[cat].items;
@@ -1022,13 +1484,26 @@ function saveSession(){
       lekse:items.filter(i=>i.homework).map(i=>({type:i.type,exerciseId:i.exerciseId,text:i.text}))
     };
   });
-  const sess={ id:practiceState.sessionId||uid(), elevId:practiceState.studentId, dato:practiceState.date, tid:practiceState.time, kategorier };
+  // One session per student per date: a new session for a student+date that already exists replaces it
+  let id=practiceState.sessionId;
+  if(!id || !sessions.some(s=>s.id===id)){
+    const existing=sessions.find(s=>s.elevId===practiceState.studentId&&s.dato===practiceState.date);
+    if(existing){
+      const st=getStudent(practiceState.studentId);
+      if(!confirm(`${st?.navn||'Eleven'} har allerede en økt ${fmtDate(practiceState.date)}.\n\nErstatte den med det som står her?`)) return;
+      id=existing.id;
+    }
+  }
+  const sess={ id:id||uid(), elevId:practiceState.studentId, dato:practiceState.date, tid:practiceState.time, kategorier };
+  // Also clean up any older duplicates for the same student+date
+  sessions=sessions.filter(s=>s.id===sess.id || !(s.elevId===sess.elevId&&s.dato===sess.dato));
   const idx=sessions.findIndex(s=>s.id===sess.id);
   if(idx>=0) sessions[idx]=sess; else sessions.push(sess);
   saveSessions();
   toast('Økt lagret!');
   // Stay in edit mode for the saved session so exercises remain visible
   practiceState.sessionId=sess.id;
+  practiceDirty=false;
   renderPractice();
 }
 function deletePracticeSession(){
@@ -1038,6 +1513,7 @@ function deletePracticeSession(){
   saveSessions();
   practiceState.sessionId=null;
   CATS.forEach(cat=>{ practiceState.categories[cat].items=[]; });
+  practiceDirty=false;
   toast('Øving slettet');
   renderPractice();
 }
@@ -1046,7 +1522,7 @@ function printHomework(){
   if(!practiceState?.studentId){ toast('Velg en elev'); return; }
   const st=getStudent(practiceState.studentId);
   const hwCats=CATS.filter(cat=>practiceState.categories[cat].items.some(i=>i.homework));
-  if(!hwCats.length){ toast('Ingen lekser markert (★)'); return; }
+  if(!hwCats.length){ toast('Ingen lekser markert (📌)'); return; }
   const catRows=hwCats.map(cat=>{
     const hw=practiceState.categories[cat].items.filter(i=>i.homework);
     const rows=hw.map(item=>`<div class="pw-ex"><div class="pw-box"></div><div>${esc(exLabel(item))}</div></div>`).join('');
@@ -1090,7 +1566,7 @@ function renderSearchResults(){
     return;
   }
   el.innerHTML=`<div class="results-count">${results.length} treff</div>`+
-    results.map(ex=>`<div class="sr-item" onclick="addFromSearch('${esc(ex.id)}')">
+    results.map(ex=>`<div class="sr-item" onclick="addFromSearch('${jsq(ex.id)}')">
       <div class="sr-title">${esc(ex.øvelse)}</div>
       <div class="sr-meta">${esc(ex.bokKort||ex.bok)} · s.${esc(ex.side)} · Nivå ${esc(ex.nivå)} ${ex.fokus?'· '+esc(ex.fokus):''}</div>
     </div>`).join('');
@@ -1098,6 +1574,7 @@ function renderSearchResults(){
 function addFromSearch(exId){
   if(!searchTargetCat) return;
   practiceState.categories[searchTargetCat].items.push({ id:uid(), type:'db', exerciseId:exId, done:false, homework:false });
+  markPracticeDirty();
   catOpen[searchTargetCat]=true;
   closeSearchModal();
   renderPractice();
@@ -1114,7 +1591,7 @@ function openTplModal(){
     el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div>Ingen maler ennå</div><div class="empty-msg">Opprett maler under Innstillinger → Maler</div></div>`;
     return;
   }
-  el.innerHTML=templates.map(t=>`<div class="list-row" onclick="applyTemplate('${esc(t.id)}')">
+  el.innerHTML=templates.map(t=>`<div class="list-row" onclick="applyTemplate('${jsq(t.id)}')">
     <div><div class="list-row-name">${esc(t.navn)}</div>
     <div class="list-row-meta">${CATS.filter(c=>(t.kategorier[c]||[]).length>0).map(c=>`${CAT_LABELS[c]}: ${t.kategorier[c].length}`).join(' · ')}</div>
     </div><div class="list-row-arrow">›</div></div>`).join('');
@@ -1130,6 +1607,7 @@ function applyTemplate(tplId){
     });
     if(tplItems.length) catOpen[cat]=true;
   });
+  markPracticeDirty();
   closeTplModal();
   renderPractice();
   toast('Mal lastet inn');
@@ -1140,13 +1618,19 @@ function applyTemplate(tplId){
 // =====================================================================
 function renderHistory(){
   const el=document.getElementById('screen-history');
-  const studOpts=students.map(s=>`<option value="${esc(s.id)}" ${s.id===histStudentId?'selected':''}>${esc(s.navn)}</option>`).join('');
+  // Active students sorted by day/time; inactive ones in their own group (their history is still viewable)
+  const histActive=sortStudents(students.filter(s=>s.aktiv!==false));
+  const histInactive=sortStudents(students.filter(s=>s.aktiv===false));
+  if(histStudentId && !getStudent(histStudentId)) histStudentId=null;
+  if(!histStudentId) histStudentId=(histActive[0]||histInactive[0])?.id||null;
+  const optHtml=s=>`<option value="${esc(s.id)}" ${s.id===histStudentId?'selected':''}>${esc(studentLabel(s))}</option>`;
+  const studOpts=histActive.map(optHtml).join('')+
+    (histInactive.length?`<optgroup label="Inaktive">${histInactive.map(optHtml).join('')}</optgroup>`:'');
 
   let content='';
   if(students.length===0){
     content=`<div class="empty"><div class="empty-icon">👤</div><div>Ingen elever ennå</div></div>`;
   } else {
-    if(!histStudentId && students.length) histStudentId=students[0].id;
     const studSessions=sessions.filter(s=>s.elevId===histStudentId).sort((a,b)=>b.dato.localeCompare(a.dato));
     if(!studSessions.length){
       content=`<div class="empty"><div class="empty-icon">📖</div><div>Ingen økter for denne eleven ennå</div></div>`;
@@ -1180,7 +1664,7 @@ function renderHistory(){
               <div class="sess-date">${fmtDate(sess.dato)}${sess.tid?` · ${esc(sess.tid)}`:''}</div>
               <div class="sess-meta">Planlagt: ${totalPlan} · Gjennomgått: ${totalDone}${totalHw?' · 📌 '+totalHw+' lekser':''}</div>
             </div>
-            <button class="ex-del" style="flex-shrink:0" onclick="event.stopPropagation();deleteSession('${esc(sess.id)}')" title="Slett økt">🗑</button>
+            <button class="ex-del" style="flex-shrink:0" onclick="event.stopPropagation();deleteSession('${jsq(sess.id)}')" title="Slett økt">🗑</button>
           </div>
           ${detail}
         </div>`;
@@ -1263,10 +1747,10 @@ function renderBooks(){
 
     const groupsHtml=sortedGroups.map(([key,group])=>{
       const isOpen=isFiltering||booksOpenGroups.has(key);
-      const items=[...group.items].sort((a,b)=>(a.side||0)-(b.side||0));
+      const items=[...group.items].sort((a,b)=>compareSides(a.side,b.side));
 
       const itemRows=items.map(ex=>`
-        <div class="book-item" onclick="openEditExercise('${esc(ex.id)}')">
+        <div class="book-item" onclick="openEditExercise('${jsq(ex.id)}')">
           <div class="book-item-main">
             <div class="book-tags">
               <span class="tag-page">s.${ex.side||'?'}</span>
@@ -1284,7 +1768,7 @@ function renderBooks(){
         :esc(group.bok||'Ukjent bok');
 
       return `<div class="card" style="margin-bottom:8px">
-        <div class="book-group-head" onclick="toggleBookGroup('${esc(key)}')">
+        <div class="book-group-head" data-key="${esc(key)}" onclick="toggleBookGroup(this.dataset.key)">
           <div class="book-group-title">
             <div class="book-group-name">${title}</div>
             ${group.forfatter?`<div class="book-group-author">${esc(group.forfatter)}</div>`:''}
@@ -1365,8 +1849,8 @@ function openEditExercise(id){
     </div>
     <div class="form-group" style="margin-bottom:16px"><label>Fokus</label><input id="eex-fokus" type="text" value="${esc(ex.fokus)}"></div>
     <div style="display:flex;gap:10px">
-      <button class="btn btn-primary" style="flex:1" onclick="saveEditExercise('${esc(id)}')">Lagre</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteExercise('${esc(id)}')">Slett</button>
+      <button class="btn btn-primary" style="flex:1" onclick="saveEditExercise('${jsq(id)}')">Lagre</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteExercise('${jsq(id)}')">Slett</button>
     </div>
   `;
   document.getElementById('modal-ex-edit').classList.add('open');
@@ -1405,16 +1889,16 @@ function deleteExercise(id){
 // =====================================================================
 function renderSettings(){
   const el=document.getElementById('screen-settings');
-  const studList=students.length?`<div class="card">`+students.map(s=>{
+  const studList=students.length?`<div class="card">`+[...sortStudents(students.filter(s=>s.aktiv!==false)),...sortStudents(students.filter(s=>s.aktiv===false))].map(s=>{
     const isAktiv=s.aktiv!==false;
     const schedule=s.defaultDag||s.defaultTid ? `${s.defaultDag||''} ${s.defaultTid||''}`.trim() : null;
-    return `<div class="list-row" onclick="openStudentModal('${esc(s.id)}')" style="${isAktiv?'':'opacity:0.5'}">
+    return `<div class="list-row" onclick="openStudentModal('${jsq(s.id)}')" style="${isAktiv?'':'opacity:0.5'}">
       <div><div class="list-row-name">${esc(s.navn)}${!isAktiv?' <span style="font-size:11px;color:var(--text3);font-weight:400">(inaktiv)</span>':''}</div>
       <div class="list-row-meta">${schedule?esc(schedule)+' · ':''}TEK${s.nivå?.TEK||1} SD${s.nivå?.SD||1} Timp${s.nivå?.Timp||1} Mel${s.nivå?.Melodisk||1} Kit${s.nivå?.Kit||1}</div></div>
       <div class="list-row-arrow">›</div></div>`;
   }).join('')+`</div>`:`<div class="card"><div style="padding:16px;color:var(--text3);font-size:14px">Ingen elever ennå</div></div>`;
 
-  const tplList=templates.length?`<div class="card">`+templates.map(t=>`<div class="list-row" onclick="openTplEditModal('${esc(t.id)}')">
+  const tplList=templates.length?`<div class="card">`+templates.map(t=>`<div class="list-row" onclick="openTplEditModal('${jsq(t.id)}')">
     <div><div class="list-row-name">${esc(t.navn)}</div>
     <div class="list-row-meta">${CATS.filter(c=>(t.kategorier[c]||[]).length>0).map(c=>`${CAT_LABELS[c]}: ${t.kategorier[c].length}`).join(' · ')||'Tom'}</div></div>
     <div class="list-row-arrow">›</div></div>`).join('')+`</div>`:`<div class="card"><div style="padding:16px;color:var(--text3);font-size:14px">Ingen maler ennå</div></div>`;
@@ -1434,37 +1918,40 @@ function renderSettings(){
       <button class="btn btn-secondary btn-full" style="margin-top:8px" onclick="openTplEditModal(null)">＋ Ny mal</button>
     </div>
     <div class="settings-block">
-      <div class="s-block-title">Microsoft OneDrive (mobil/alle enheter)</div>
+      <div class="s-block-title">Microsoft OneDrive (iPhone, iPad og PC)</div>
       <div class="card">
         <div style="padding:14px 16px">
           ${graphAccount()
-            ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-                <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;flex-shrink:0"></span>
+            ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                <span style="width:10px;height:10px;border-radius:50%;background:${syncState()==='ok'?'var(--green)':(syncState()==='pending'||syncState()==='checking')?'var(--yellow)':'var(--red)'};display:inline-block;flex-shrink:0"></span>
                 <div style="flex:1;min-width:0">
-                  <div style="font-size:13px">Innlogget: <strong>${esc(graphAccount().username||graphAccount().name||'Microsoft-konto')}</strong></div>
-                  <div id="od-saved-at" style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:2px">${(()=>{try{const d=JSON.parse(localStorage.getItem('rl_graph_saved_at')||'""');return d?'Sist lagret: '+new Date(d).toLocaleString('no-NO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';}catch{return '';}})()}</div>
+                  <div style="font-size:13px;overflow-wrap:anywhere">Innlogget: <strong>${esc(graphAccount().username||'Microsoft-konto')}</strong></div>
+                  <div style="font-size:13px;margin-top:2px">${SYNC_TEXT[syncState()]||''}${graphError?` <span style="color:var(--text2)">(${esc(graphError)})</span>`:''}</div>
+                  ${lsStr(K.savedAt)?`<div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:2px">Sist lagret i OneDrive: ${esc(lsStr(K.savedFrom)||'?')} · ${esc(fmtStamp(lsStr(K.savedAt)))}</div>`:''}
                 </div>
                </div>
                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-                 <button class="btn btn-full" style="background:#1a3a2a;color:#30D158;border:1.5px solid #30D158;font-size:14px;font-weight:600;padding:12px 10px;gap:6px" onclick="loadFromGraph()">
-                   <span style="font-size:18px">☁️↓</span><span>Hent fra<br>OneDrive</span>
+                 <button class="btn btn-full sync-btn-down" style="flex-direction:column;padding:12px 8px;gap:2px" onclick="loadFromGraph()">
+                   <span style="font-size:18px">☁️↓</span><span>Hent fra OneDrive</span>
                  </button>
-                 <button class="btn btn-full" style="background:#1a2a3a;color:#0A84FF;border:1.5px solid #0A84FF;font-size:14px;font-weight:600;padding:12px 10px;gap:6px" onclick="pushToOneDrive()">
-                   <span style="font-size:18px">☁️↑</span><span>Send til<br>OneDrive</span>
+                 <button class="btn btn-full sync-btn-up" style="flex-direction:column;padding:12px 8px;gap:2px" onclick="pushToOneDrive()">
+                   <span style="font-size:18px">☁️↑</span><span>Send til OneDrive</span>
                  </button>
                </div>
-               <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:10px">
-                 ⚠️ <strong style="color:var(--yellow)">iPad-tips:</strong> Bruk alltid <em>«Hent fra OneDrive»</em> først når du starter på iPad, så du ikke overskriver nyere PC-data.
+               <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">
+                 Appen henter nyeste data automatisk når den åpnes, og sjekker OneDrive før den lagrer. Har en annen enhet lagret i mellomtiden, får du velge hvilken versjon som skal gjelde — ingenting overskrives i det stille.
                </div>
                <button class="btn btn-ghost btn-full btn-sm" onclick="signOutMicrosoft()">Logg ut</button>`
-            : `<div style="font-size:13px;color:var(--text2);margin-bottom:12px">
+            : `${lsStr(K.wasIn)==='1'?`<div style="background:rgba(255,69,58,0.12);border:1px solid rgba(255,69,58,0.3);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text);margin-bottom:12px">
+                 ⚠️ Du er logget ut. Endringer lagres bare på denne enheten${isDirty()?' — du har endringer som ikke er sendt':''}. Logg inn igjen for å synkronisere.
+               </div>`:`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">
                 Logg inn med Microsoft-kontoen din for å lese og skrive data direkte til OneDrive. Fungerer på iPhone og alle nettlesere.
-               </div>
+               </div>`}
                <div class="form-group" style="margin-bottom:10px">
                  <label style="font-size:12px">Azure Application (client) ID</label>
                  <input id="graph-client-id-input" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                   value="${esc(graphClientId())}"
-                   style="font-family:monospace;font-size:12px"
+                   value="${esc(graphClientId())}" autocapitalize="off" autocorrect="off" spellcheck="false"
+                   style="font-family:var(--mono);font-size:12px"
                    oninput="saveGraphClientId(this.value)">
                </div>
                <button class="btn btn-primary btn-full" onclick="signInMicrosoft()">
@@ -1473,21 +1960,26 @@ function renderSettings(){
                </button>`
           }
         </div>
-        <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">
-          Data lagres som <strong>Slagverk/slagverk_data.json</strong> i OneDrive.
+        <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);line-height:1.5">
+          Data lagres som <strong>Slagverk/slagverk_data.json</strong> i OneDrive.<br>
+          iPhone/iPad: Legg appen på Hjem-skjermen (Del → Legg til på Hjem-skjerm). Da slettes ikke dataene automatisk av Safari. Hjem-skjerm-appen har egen lagring, så du må logge inn der én gang.
         </div>
       </div>
     </div>
     <div class="settings-block">
-      <div class="s-block-title">OneDrive-synk (PC — Chrome/Edge)</div>
+      <div class="s-block-title">Datafil-synk (PC — Chrome/Edge)</div>
       <div class="card">
         <div style="padding:14px 16px">
-          ${fileHandle
+          ${graphMode()
+            ? `<div style="font-size:13px;color:var(--text2)">
+                 Ikke i bruk på denne enheten, fordi OneDrive-innlogging brukes. Én synkmetode per enhet hindrer at de to overskriver hverandre.
+               </div>`
+            : fileHandle
             ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-                <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;flex-shrink:0"></span>
+                <span style="width:10px;height:10px;border-radius:50%;background:${_fileError?'var(--red)':'var(--green)'};display:inline-block;flex-shrink:0"></span>
                 <span style="font-size:13px">Tilkoblet: <strong>${esc(fileHandle.name)}</strong></span>
                </div>
-               <button class="btn btn-secondary btn-full btn-sm" onclick="saveToFile().then(()=>toast('Lagret til fil'))">💾 Lagre til fil nå</button>
+               <button class="btn btn-secondary btn-full btn-sm" onclick="manualSaveToFile()">💾 Lagre til fil nå</button>
                <button class="btn btn-ghost btn-full btn-sm" style="margin-top:6px" onclick="disconnectDataFile()">Koble fra</button>`
             : _pendingHandle
               ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
@@ -1504,13 +1996,10 @@ function renderSettings(){
                       <button class="btn btn-ghost btn-sm" style="flex:1" onclick="createNewDataFile()">＋ Ny datafil</button>
                     </div>`
                   : `<div style="font-size:12px;padding:10px;background:var(--surface2);border-radius:8px;color:var(--text2)">
-                      ⚠ Direkte filsynk krever Chrome eller Edge.
+                      ⚠ Direkte filsynk krever Chrome eller Edge. Bruk OneDrive-innlogging over.
                     </div>`
                 }`
           }
-        </div>
-        <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)">
-          Lagre <strong>slagverk_app.html</strong> og <strong>slagverk_data.json</strong> i samme OneDrive-mappe for synk mellom enheter.
         </div>
       </div>
     </div>
@@ -1527,8 +2016,12 @@ function renderSettings(){
             <button class="btn btn-ghost btn-sm" style="flex:1" onclick="document.getElementById('input-json').value='';document.getElementById('input-json').click()">⬆ Importer JSON</button>
           </div>
         </div>
+        ${(()=>{ const b=getBackup(); return b?.data?`<div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+          <button class="btn btn-secondary btn-full btn-sm" onclick="restoreBackup()">↩ Gjenopprett lokal backup</button>
+          <div style="font-size:12px;color:var(--text3);margin-top:6px;line-height:1.4">Tatt ${esc(fmtStamp(b.at))} på ${esc(b.from||'?')} — ${esc(b.reason||'')}<br>${esc(dataSummary(b.data))}</div>
+        </div>`:''; })()}
         <div style="padding:12px 16px">
-          <button class="btn btn-danger btn-full btn-sm" onclick="clearAllData()">⚠ Slett alle data</button>
+          <button class="btn btn-danger btn-full btn-sm" onclick="clearAllData()">⚠ Slett alle data på denne enheten</button>
         </div>
       </div>
     </div>
@@ -1542,7 +2035,7 @@ function renderSettings(){
 function openStudentModal(id){
   settingsEditStudentId=id;
   const st=id?getStudent(id):null;
-  document.getElementById('modal-student-title').textContent=id?esc(st?.navn||'Elev'):'Ny elev';
+  document.getElementById('modal-student-title').textContent=id?(st?.navn||'Elev'):'Ny elev';
   const lvls=st?.nivå||{TEK:1,SD:1,Timp:1,Melodisk:1,Kit:1};
   const catRows=CATS.map(cat=>{
     const cur=lvls[cat]||1;
@@ -1578,7 +2071,7 @@ function openStudentModal(id){
     ${catRows}
     <div style="display:flex;gap:10px;margin-top:12px">
       <button class="btn btn-primary" style="flex:1" onclick="saveStudent()">Lagre</button>
-      ${id?`<button class="btn btn-danger btn-sm" onclick="deleteStudent('${esc(id)}')">Slett</button>`:''}
+      ${id?`<button class="btn btn-danger btn-sm" onclick="deleteStudent('${jsq(id)}')">Slett</button>`:''}
     </div>
   `;
   document.getElementById('modal-student').classList.add('open');
@@ -1637,8 +2130,9 @@ function deleteStudent(id){
 function openTplEditModal(id){
   settingsEditTplId=id;
   const tpl=id?templates.find(t=>t.id===id):null;
-  document.getElementById('modal-tpl-edit-title').textContent=tpl?esc(tpl.navn):'Ny mal';
-  const cats=tpl?tpl.kategorier:initCats();
+  document.getElementById('modal-tpl-edit-title').textContent=tpl?tpl.navn:'Ny mal';
+  _tplEditCats=null; // always start from the template being opened, never a previously opened one
+  const cats=getTplEditCats();
   const catRows=CATS.map(cat=>{
     const items=(cats[cat]||[]);
     const rows=items.map((item,idx)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
@@ -1656,19 +2150,20 @@ function openTplEditModal(id){
     <div id="tpl-cat-rows">${catRows}</div>
     <div style="display:flex;gap:10px;margin-top:8px">
       <button class="btn btn-primary" style="flex:1" onclick="saveTemplate()">Lagre mal</button>
-      ${id?`<button class="btn btn-danger btn-sm" onclick="deleteTemplate('${esc(id)}')">Slett</button>`:''}
+      ${id?`<button class="btn btn-danger btn-sm" onclick="deleteTemplate('${jsq(id)}')">Slett</button>`:''}
     </div>
   `;
   document.getElementById('modal-tpl-edit').classList.add('open');
 }
-function closeTplEditModal(){ document.getElementById('modal-tpl-edit').classList.remove('open'); renderSettings(); }
+function closeTplEditModal(){ document.getElementById('modal-tpl-edit').classList.remove('open'); _tplEditCats=null; renderSettings(); }
+function initTplCats(){ const c={}; CATS.forEach(k=>c[k]=[]); return c; }
 let _tplEditCats=null;
 function getTplEditCats(){
   // rebuild from DOM is complex — store in memory
   if(!_tplEditCats){
     const id=settingsEditTplId;
     const tpl=id?templates.find(t=>t.id===id):null;
-    _tplEditCats=tpl?JSON.parse(JSON.stringify(tpl.kategorier)):initCats();
+    _tplEditCats=Object.assign(initTplCats(), tpl?JSON.parse(JSON.stringify(tpl.kategorier||{})):{});
   }
   return _tplEditCats;
 }
@@ -1704,7 +2199,7 @@ function refreshTplEditModal(){
 function saveTemplate(){
   const navn=document.getElementById('tpl-navn').value.trim();
   if(!navn){ toast('Skriv inn malnavn'); return; }
-  const kategorier=getTplEditCats()||initCats();
+  const kategorier=getTplEditCats();
   if(settingsEditTplId){
     const tpl=templates.find(t=>t.id===settingsEditTplId);
     if(tpl){ tpl.navn=navn; tpl.kategorier=kategorier; }
@@ -1832,7 +2327,7 @@ function importExcel(input){
                 dato=`${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
               } else {
                 const d=new Date(datoRaw);
-                if(!isNaN(d)) dato=d.toISOString().slice(0,10);
+                if(!isNaN(d)) dato=localDateStr(d);
               }
             }catch{}
           }
@@ -1898,27 +2393,51 @@ function importJSON(input){
   const file=input.files[0];
   if(!file) return;
   const reader=new FileReader();
-  reader.onload=e=>{
+  reader.onload=async e=>{
     try{
       const data=JSON.parse(e.target.result);
-      if(data.students) { students=data.students; saveStudents(); }
-      if(data.exercises) { exercises=data.exercises; saveExercises(); }
-      if(data.sessions) { sessions=data.sessions; saveSessions(); }
-      if(data.templates) { templates=data.templates; saveTemplates(); }
-      toast('Backup gjenopprettet');
-      renderSettings();
+      if(!data.students&&!data.sessions&&!data.exercises&&!data.templates){ toast('Filen ser ikke ut som en Slagverk-backup'); input.value=''; return; }
+      backupLocal('Før import av JSON-backup');
+      // Write locally only — sending to OneDrive/datafil is a separate, explicit choice below
+      if(data.students)  students=data.students;
+      if(data.exercises) exercises=data.exercises;
+      if(data.sessions)  sessions=data.sessions;
+      if(data.templates) templates=data.templates;
+      lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
+      markLocalChange();
+      refreshPracticeAfterDataChange();
       input.value='';
+      const target=graphMode()?'OneDrive':(fileHandle?'datafilen':'');
+      if(target){
+        if(confirm(`Backupen er lagt inn på denne enheten.\n\nSende den til ${target} også? Det erstatter dataene der.\n\nVelg Avbryt for å bare ha den her (automatisk synk stoppes da).`)){
+          localOnly=false;
+          if(graphMode()){ if(graphAccount()) await graphPush({force:true,silent:false}); else toast('Logg inn på OneDrive for å sende'); }
+          else await saveToFile();
+        } else {
+          localOnly=true;
+        }
+      }
+      toast('Backup gjenopprettet');
+      renderCurrentTab(); updateSyncUI();
     } catch(err){ toast('Feil: '+err.message); input.value=''; }
   };
   reader.readAsText(file);
 }
 function clearAllData(){
-  if(!confirm('Slette ALL data? Dette kan ikke angres!')) return;
+  const target=graphMode()?'OneDrive':(fileHandle?'Datafilen':'');
+  const msg=target
+    ? `Slette ALLE data på denne enheten?\n\n${target} blir IKKE endret. Automatisk synk stoppes til du henter eller sender manuelt. En lokal backup tas først.`
+    : 'Slette ALLE data på denne enheten?\n\nEn lokal backup tas først (Innstillinger → Data).';
+  if(!confirm(msg)) return;
+  backupLocal('Før sletting av alle data');
   students=[]; exercises=[]; sessions=[]; templates=[];
-  saveStudents(); saveExercises(); saveSessions(); saveTemplates();
-  practiceState=null;
-  toast('Data slettet');
-  renderSettings();
+  lsSave(LS.S,students); lsSave(LS.E,exercises); lsSave(LS.X,sessions); lsSave(LS.T,templates);
+  clearTimeout(_saveFileTimer); _saveFileTimer=null;
+  clearDirty(); lsSet(K.etag,null); graphReady=false; graphConflict=null;
+  if(target) localOnly=true;
+  practiceState=null; practiceDirty=false;
+  toast('Data slettet på denne enheten');
+  renderSettings(); updateSyncUI();
 }
 
 // 4a — Export entire book database as semicolon-separated CSV (BOM for Excel UTF-8)
@@ -2058,7 +2577,7 @@ function renderCalendar(){
   // Legend
   const legendHtml=students.map((s,i)=>{
     const monthCount=sessions.filter(x=>x.elevId===s.id && x.dato && x.dato.startsWith(monthPfx)).length;
-    return `<div class="cal-legend-item" onclick="openStudentSessions('${esc(s.id)}')" title="Vis ${esc(s.navn)}s økter denne måneden">
+    return `<div class="cal-legend-item" onclick="openStudentSessions('${jsq(s.id)}')" title="Vis ${esc(s.navn)}s økter denne måneden">
       <div class="cal-legend-dot" style="background:${STUDENT_COLORS[i%STUDENT_COLORS.length]}"></div>
       <span>${esc(s.navn)}</span>
       <span class="cal-legend-count">${monthCount}</span>
@@ -2099,7 +2618,7 @@ function calSessHtml(sess, color, nameOrDate){
         <span>${esc(nameOrDate)}</span>
         ${sess.tid?`<span class="cal-sess-time">${esc(sess.tid)}</span>`:''}
       </div>
-      <button class="cal-go-btn" onclick="openPracticeForSession('${esc(sess.elevId)}','${esc(sess.dato)}')" title="Åpne i Øving">✏️ Øving</button>
+      <button class="cal-go-btn" onclick="openPracticeForSession('${jsq(sess.elevId)}','${jsq(sess.dato)}')" title="Åpne i Øving">✏️ Øving</button>
     </div>
     ${catChips?`<div class="cal-sess-cats">${catChips}</div>`:'<div style="font-size:13px;color:var(--text3)">Ingen øvelser registrert</div>'}
   </div>`;
@@ -2138,12 +2657,20 @@ function openStudentSessions(studentId){
 // =====================================================================
 // INIT
 // =====================================================================
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',async()=>{
+  // Older versions stored the timestamp JSON-encoded
+  const sa=lsStr(K.savedAt); if(sa&&sa.startsWith('"')){ try{ lsSet(K.savedAt,JSON.parse(sa)); }catch{} }
+  // Existing OneDrive users from before this version count as "OneDrive used on this device"
+  if(graphAccount()) lsSet(K.wasIn,'1');
   loadAll();
   practiceState=newPracticeState();
   renderPractice();
-  tryAutoConnect();      // async — restores FSA file handle from IndexedDB
-  handleOAuthCallback(); // async — handles OAuth redirect callback after Microsoft login
+  updateSyncUI();
+  await tryAutoConnect();                       // PC datafil (skipped when OneDrive login is used here)
+  const loggedInNow=await handleOAuthCallback(); // returning from Microsoft login
+  if(!loggedInNow && graphAccount()) await graphCheck('start'); // always compare with OneDrive before any upload
+  updateSyncUI();
+  if(currentTab==='settings') renderSettings();
 });
 </script>
 </body>
