@@ -670,10 +670,13 @@ async function handleOAuthCallback(){
   // Never pull its data over ours silently: compare and let the user choose (incl. merge).
   const prevAcc=(lsStr(K.account)||'').toLowerCase();
   const newAcc=(localStorage.getItem('ms_username')||'').toLowerCase();
-  if(prevAcc && newAcc && prevAcc!==newAcc){
-    _switchedFrom=lsStr(K.account);
+  if(newAcc && prevAcc!==newAcc && hasAnyData()){
+    // New account for this device's data (another account, or first OneDrive login on a device that
+    // already has data, e.g. a PC that used datafil-synk): compare and let the user choose/merge.
+    _switchedFrom=lsStr(K.account)||'';
     lsSet(K.etag,null);
-    if(hasAnyData()) markLocalChange();
+    lsSet(K.dirty,'1');              // flag only — keep the real "last changed" time for the merge
+    if(!lsStr(K.changedAt)) lsSet(K.changedAt,new Date().toISOString());
   }
   // Compare with OneDrive instead of blindly downloading: unsent local changes are never silently lost
   await graphCheck('login');
@@ -995,26 +998,35 @@ function sameContent(r){
          _norm(exercises)===_norm(r.exercises) && _norm(templates)===_norm(r.templates);
 }
 // Union of both versions. Where both have the same item (same id, or for sessions the same student+date),
-// the OneDrive version is kept. Students that exist on both sides under different ids are matched by name.
+// the side that was changed most recently wins. Students that exist on both sides under different ids
+// are matched by name.
+function localIsNewer(remote){
+  const l=Date.parse(lsStr(K.changedAt)||''), r=Date.parse(remote?.savedAt||'');
+  return !isNaN(l) && (isNaN(r) || l>r);
+}
 function mergeData(local,remote){
-  const out={students:[...(remote.students||[])],exercises:[...(remote.exercises||[])],
-             sessions:[...(remote.sessions||[])],templates:[...(remote.templates||[])]};
+  const preferLocal=localIsNewer(remote);
+  const primary=preferLocal?local:remote, secondary=preferLocal?remote:local;
+  const out={students:[...(primary.students||[])],exercises:[...(primary.exercises||[])],
+             sessions:[...(primary.sessions||[])],templates:[...(primary.templates||[])]};
   const idMap={};
-  (local.students||[]).forEach(st=>{
+  (secondary.students||[]).forEach(st=>{
     if(out.students.some(x=>x.id===st.id)) return;
     const same=out.students.find(x=>(x.navn||'').trim().toLowerCase()===(st.navn||'').trim().toLowerCase());
     if(same) idMap[st.id]=same.id; else out.students.push(st);
   });
-  (local.exercises||[]).forEach(e=>{ if(!out.exercises.some(x=>x.id===e.id)) out.exercises.push(e); });
-  (local.templates||[]).forEach(t=>{ if(!out.templates.some(x=>x.id===t.id)) out.templates.push(t); });
-  let added=0, kept=0;
-  (local.sessions||[]).forEach(se=>{
+  (secondary.exercises||[]).forEach(e=>{ if(!out.exercises.some(x=>x.id===e.id)) out.exercises.push(e); });
+  (secondary.templates||[]).forEach(t=>{ if(!out.templates.some(x=>x.id===t.id)) out.templates.push(t); });
+  let clashes=0;
+  (secondary.sessions||[]).forEach(se=>{
     const s2={...se, elevId: idMap[se.elevId]||se.elevId};
     const clash=out.sessions.find(x=>x.id===s2.id || (x.elevId===s2.elevId && x.dato===s2.dato));
-    if(clash){ if(JSON.stringify(clash)!==JSON.stringify(se)) kept++; return; }
-    out.sessions.push(s2); added++;
+    if(clash){ if(JSON.stringify(clash)!==JSON.stringify(se)) clashes++; return; }
+    out.sessions.push(s2);
   });
-  return {data:out, added, kept};
+  const rIds=new Set((remote.sessions||[]).map(x=>x.id));
+  const added=out.sessions.filter(x=>!rIds.has(x.id)).length;
+  return {data:out, added, clashes, preferLocal};
 }
 
 // --- Conflict dialog ---
@@ -1046,6 +1058,8 @@ function openSyncConflict(){
   const m=mergeData({students,exercises,sessions,templates},r);
   const intro=_switchedFrom
     ? `Du har logget inn med <b>${esc(acc)}</b>, men dataene på denne enheten kommer fra <b>${esc(_switchedFrom)}</b>. Det er to forskjellige OneDriver med hver sin datafil. Velg hva som skal ligge i OneDriven til ${esc(acc)}.`
+    : _switchedFrom===''
+    ? `Denne enheten kobles til OneDriven til <b>${esc(acc)}</b> for første gang, og både enheten og OneDrive har data. Velg hva som skal ligge i OneDriven til ${esc(acc)}.`
     : `Både OneDrive og denne enheten har endringer siden sist de var synkronisert. Velg hvilken versjon som skal gjelde.`;
   document.getElementById('modal-sync-body').innerHTML=`
     <div style="font-size:14px;color:var(--text2);margin-bottom:14px;line-height:1.5">${intro}</div>
@@ -1065,8 +1079,8 @@ function openSyncConflict(){
       </div>
     </div>
     ${diffHtml}
-    ${d.onlyLocal.length?`<button class="btn btn-full sync-btn-merge" onclick="resolveConflict('merge')">🔀 Slå sammen</button>
-    <div class="sync-hint">Beholder alt fra OneDrive og legger til ${m.added} økt${m.added===1?'':'er'} som bare finnes her${m.kept?`. ${m.kept} økt${m.kept===1?'':'er'} som finnes begge steder, beholdes slik de er i OneDrive`:''}. Lagres i OneDrive etterpå.</div>`:''}
+    ${(d.onlyLocal.length||d.changed.length)?`<button class="btn btn-full sync-btn-merge" onclick="resolveConflict('merge')">🔀 Slå sammen</button>
+    <div class="sync-hint">Tar med økter, elever, bøker og maler fra begge steder (${m.added} økt${m.added===1?'':'er'} legges til i OneDrive).${m.clashes?` Der samme elev har økt samme dato begge steder (${m.clashes}), brukes versjonen fra ${m.preferLocal?'denne enheten':'OneDrive'}, som er sist endret.`:''} Lagres i OneDrive etterpå.</div>`:''}
     <button class="btn btn-full sync-btn-down" onclick="resolveConflict('remote')">☁️↓ Bruk OneDrive-versjonen</button>
     <div class="sync-hint">Endringene på denne enheten tas vare på som backup (Innstillinger → Data).</div>
     <button class="btn btn-full sync-btn-up" onclick="resolveConflict('local')">📱↑ Bruk versjonen på denne enheten</button>
@@ -1087,7 +1101,7 @@ async function resolveConflict(choice){
     pullApply(m.data,c.meta);   // OneDrive's eTag: the upload below only succeeds if nobody saved meanwhile
     markLocalChange();
     await graphPush({silent:true});
-    toast(`🔀 Slått sammen: ${m.added} økt${m.added===1?'':'er'} lagt til i OneDrive`);
+    toast(`🔀 Slått sammen og lagret i OneDrive (${m.data.sessions.length} økter)`);
   } else if(choice==='remote'){
     pullApply(c.remote,c.meta);
     toast('☁️ OneDrive-versjonen brukes — lokal backup er tatt');
@@ -2483,15 +2497,19 @@ function importJSON(input){
       markLocalChange();
       refreshPracticeAfterDataChange();
       input.value='';
-      const target=graphMode()?'OneDrive':(fileHandle?'datafilen':'');
-      if(target){
-        if(confirm(`Backupen er lagt inn på denne enheten.\n\nSende den til ${target} også? Det erstatter dataene der.\n\nVelg Avbryt for å bare ha den her (automatisk synk stoppes da).`)){
-          localOnly=false;
-          if(graphMode()){ if(graphAccount()) await graphPush({force:true,silent:false}); else toast('Logg inn på OneDrive for å sende'); }
-          else await saveToFile();
-        } else {
-          localOnly=true;
-        }
+      const stamp=data.savedAt||data.exportedAt;
+      if(stamp) lsSet(K.changedAt,stamp);   // the backup's own age decides who wins in a merge
+      if(graphAccount()){
+        // Let the user compare with OneDrive: merge, keep OneDrive, or replace OneDrive
+        lsSet(K.etag,null); localOnly=false; _switchedFrom=null;
+        toast('Backup lagt inn — sammenligner med OneDrive…');
+        await graphCheck('manual');
+      } else if(graphMode()){
+        localOnly=true; toast('Logg inn på OneDrive for å sammenligne og sende');
+      } else if(fileHandle){
+        if(confirm('Backupen er lagt inn på denne enheten.\n\nLagre den til datafilen også? Det erstatter dataene der.\n\nVelg Avbryt for å bare ha den her (automatisk lagring stoppes da).')){
+          localOnly=false; await saveToFile();
+        } else localOnly=true;
       }
       toast('Backup gjenopprettet');
       renderCurrentTab(); updateSyncUI();
