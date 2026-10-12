@@ -281,6 +281,7 @@
     .sync-banner > span:first-child { flex:1 1 200px; }
     .sync-btn-down { background:rgba(48,209,88,0.12); color:var(--green); border:1.5px solid var(--green); font-weight:600; white-space:normal; text-align:center; }
     .sync-btn-up { background:rgba(10,132,255,0.12); color:#0A84FF; border:1.5px solid #0A84FF; font-weight:600; white-space:normal; text-align:center; }
+    .sync-btn-merge { background:rgba(255,107,53,0.12); color:var(--accent); border:1.5px solid var(--accent); font-weight:600; white-space:normal; text-align:center; }
     .sync-hint { font-size:12px; color:var(--text3); margin:4px 2px 12px; line-height:1.4; }
     .sync-cmp { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
     .sync-cmp-box { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:10px; font-size:13px; min-width:0; overflow-wrap:anywhere; }
@@ -634,8 +635,14 @@ async function signInMicrosoft(){
   sessionStorage.setItem('pkce_v',verifier);
   sessionStorage.setItem('pkce_s',state);
   const p=new URLSearchParams({client_id:cid,response_type:'code',redirect_uri:GRAPH_REDIRECT_URI,
-    scope:GRAPH_SCOPE,state,code_challenge:challenge,code_challenge_method:'S256',response_mode:'query'});
+    scope:GRAPH_SCOPE,state,code_challenge:challenge,code_challenge_method:'S256',response_mode:'query',
+    prompt:'select_account'}); // always show the account picker — otherwise Microsoft reuses whatever account the browser is already signed in with
   window.location.href=MS_AUTH_URL+'?'+p;
+}
+// Log in with another Microsoft account (= another OneDrive)
+function switchMicrosoftAccount(){
+  if(isDirty() && !confirm('Denne enheten har endringer som ikke er sendt til OneDrive.\n\nBytte konto likevel? Du får velge hva som skal skje med dem etter innlogging.')) return;
+  signInMicrosoft();
 }
 
 // --- Handle redirect back from Microsoft (called on page load) ---
@@ -659,6 +666,15 @@ async function handleOAuthCallback(){
   localStorage.setItem('ms_token_expiry',Date.now()+(t.expires_in*1000));
   lsSet(K.wasIn,'1');
   await _fetchGraphUsername(t.access_token);
+  // Another Microsoft account = another OneDrive with its own data file.
+  // Never pull its data over ours silently: compare and let the user choose (incl. merge).
+  const prevAcc=(lsStr(K.account)||'').toLowerCase();
+  const newAcc=(localStorage.getItem('ms_username')||'').toLowerCase();
+  if(prevAcc && newAcc && prevAcc!==newAcc){
+    _switchedFrom=lsStr(K.account);
+    lsSet(K.etag,null);
+    if(hasAnyData()) markLocalChange();
+  }
   // Compare with OneDrive instead of blindly downloading: unsent local changes are never silently lost
   await graphCheck('login');
   renderSettings();
@@ -692,7 +708,7 @@ async function getGraphToken(){
 async function _fetchGraphUsername(token){
   try{
     const r=await fetch('https://graph.microsoft.com/v1.0/me',{headers:{'Authorization':'Bearer '+token}});
-    if(r.ok){ const u=await r.json(); localStorage.setItem('ms_username',u.userPrincipalName||u.displayName||'Microsoft-konto'); }
+    if(r.ok){ const u=await r.json(); localStorage.setItem('ms_username',u.userPrincipalName||u.mail||u.displayName||'Microsoft-konto'); }
   }catch(e){}
 }
 
@@ -718,7 +734,9 @@ async function signOutMicrosoft(){
 // =====================================================================
 const GRAPH_ITEM_URL='https://graph.microsoft.com/v1.0/me/drive/root:/Slagverk/slagverk_data.json';
 const K={ etag:'rl_graph_etag', savedAt:'rl_graph_saved_at', savedFrom:'rl_graph_saved_from', dirty:'rl_dirty',
-          changedAt:'rl_local_changed_at', backup:'rl_local_backup', wasIn:'rl_graph_was_logged_in' };
+          changedAt:'rl_local_changed_at', backup:'rl_local_backup', wasIn:'rl_graph_was_logged_in',
+          account:'rl_graph_account' /* the Microsoft account this device's data was last synced with — kept on logout */ };
+let _switchedFrom=null;   // set right after logging in with a different account than before
 let graphReady=false;     // true once this session has compared with OneDrive
 let graphConflict=null;   // {meta, remote} when both OneDrive and this device have changes
 let graphError='';        // last network/HTTP error text
@@ -829,6 +847,8 @@ function pullApply(remote,meta){
   lsSet(K.etag,meta.etag);
   lsSet(K.savedAt,remote.savedAt||meta.modified||'');
   lsSet(K.savedFrom,remote.savedFrom||'');
+  lsSet(K.account,localStorage.getItem('ms_username'));
+  _switchedFrom=null;
   clearDirty();
   graphReady=true; graphConflict=null; graphError=''; localOnly=false;
   updateSyncUI();
@@ -863,6 +883,13 @@ async function _graphCheck(reason){
       if(isDirty()) await _graphPush({});
       return;
     }
+    if(isDirty() && sameContent(remote)){
+      // Unsent changes, but OneDrive already holds exactly the same data
+      lsSet(K.etag,meta.etag); lsSet(K.savedAt,remote.savedAt||''); lsSet(K.savedFrom,remote.savedFrom||'');
+      lsSet(K.account,localStorage.getItem('ms_username')); _switchedFrom=null;
+      clearDirty(); graphReady=true;
+      return;
+    }
     if(!isDirty() || !hasAnyData()){
       const hadData=hasAnyData();
       pullApply(remote,meta);
@@ -885,7 +912,7 @@ async function _graphPush({force=false,silent=true,retried=false}={}){
   try{
     const token=await graphToken();
     const savedAt=new Date().toISOString(), savedFrom=deviceLabel();
-    const body=JSON.stringify({students,exercises,sessions,templates,savedAt,savedFrom},null,2);
+    const body=JSON.stringify({students,exercises,sessions,templates,savedAt,savedFrom,savedByAccount:localStorage.getItem('ms_username')||''},null,2);
     const headers={Authorization:'Bearer '+token,'Content-Type':'application/json'};
     const known=lsStr(K.etag);
     if(!force && known) headers['If-Match']=known;
@@ -908,6 +935,7 @@ async function _graphPush({force=false,silent=true,retried=false}={}){
     const item=await r.json().catch(()=>({}));
     lsSet(K.etag,item.eTag||'');
     lsSet(K.savedAt,savedAt); lsSet(K.savedFrom,savedFrom);
+    lsSet(K.account,localStorage.getItem('ms_username')); _switchedFrom=null;
     if(_changeSeq===seq) clearDirty();
     graphReady=true; graphError=''; graphConflict=null; localOnly=false;
     if(!silent) toast('☁️ Sendt til OneDrive');
@@ -960,6 +988,35 @@ async function pushToOneDrive(){
   renderCurrentTab();
 }
 
+// --- Compare / merge ---
+function _norm(arr){ return JSON.stringify([...(arr||[])].sort((a,b)=>String(a.id).localeCompare(String(b.id)))); }
+function sameContent(r){
+  return _norm(students)===_norm(r.students) && _norm(sessions)===_norm(r.sessions) &&
+         _norm(exercises)===_norm(r.exercises) && _norm(templates)===_norm(r.templates);
+}
+// Union of both versions. Where both have the same item (same id, or for sessions the same student+date),
+// the OneDrive version is kept. Students that exist on both sides under different ids are matched by name.
+function mergeData(local,remote){
+  const out={students:[...(remote.students||[])],exercises:[...(remote.exercises||[])],
+             sessions:[...(remote.sessions||[])],templates:[...(remote.templates||[])]};
+  const idMap={};
+  (local.students||[]).forEach(st=>{
+    if(out.students.some(x=>x.id===st.id)) return;
+    const same=out.students.find(x=>(x.navn||'').trim().toLowerCase()===(st.navn||'').trim().toLowerCase());
+    if(same) idMap[st.id]=same.id; else out.students.push(st);
+  });
+  (local.exercises||[]).forEach(e=>{ if(!out.exercises.some(x=>x.id===e.id)) out.exercises.push(e); });
+  (local.templates||[]).forEach(t=>{ if(!out.templates.some(x=>x.id===t.id)) out.templates.push(t); });
+  let added=0, kept=0;
+  (local.sessions||[]).forEach(se=>{
+    const s2={...se, elevId: idMap[se.elevId]||se.elevId};
+    const clash=out.sessions.find(x=>x.id===s2.id || (x.elevId===s2.elevId && x.dato===s2.dato));
+    if(clash){ if(JSON.stringify(clash)!==JSON.stringify(se)) kept++; return; }
+    out.sessions.push(s2); added++;
+  });
+  return {data:out, added, kept};
+}
+
 // --- Conflict dialog ---
 function sessionDiff(localS,remoteS){
   const rm=new Map((remoteS||[]).map(s=>[s.id,s]));
@@ -985,11 +1042,17 @@ function openSyncConflict(){
       ${d.changed.length?`<div><b>Økter endret begge steder (${d.changed.length}):</b>${list(d.changed,students)}</div>`:''}
       ${!d.onlyLocal.length&&!d.onlyRemote.length&&!d.changed.length?`<div>Øktene er like — forskjellen ligger i elever, bøker eller maler.</div>`:''}
     </div>`;
+  const acc=localStorage.getItem('ms_username')||'';
+  const m=mergeData({students,exercises,sessions,templates},r);
+  const intro=_switchedFrom
+    ? `Du har logget inn med <b>${esc(acc)}</b>, men dataene på denne enheten kommer fra <b>${esc(_switchedFrom)}</b>. Det er to forskjellige OneDriver med hver sin datafil. Velg hva som skal ligge i OneDriven til ${esc(acc)}.`
+    : `Både OneDrive og denne enheten har endringer siden sist de var synkronisert. Velg hvilken versjon som skal gjelde.`;
   document.getElementById('modal-sync-body').innerHTML=`
-    <div style="font-size:14px;color:var(--text2);margin-bottom:14px">Både OneDrive og denne enheten har endringer siden sist de var synkronisert. Velg hvilken versjon som skal gjelde.</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:14px;line-height:1.5">${intro}</div>
     <div class="sync-cmp">
       <div class="sync-cmp-box">
         <div class="sync-cmp-title">☁️ OneDrive</div>
+        <div style="font-size:12px;color:var(--text2)">${esc(acc)}</div>
         <div>Lagret fra <b>${esc(r.savedFrom||'annen enhet')}</b></div>
         <div class="sync-cmp-time">${esc(fmtStamp(r.savedAt||c.meta?.modified))}</div>
         <div class="sync-cmp-sum">${esc(dataSummary(r))}</div>
@@ -1002,6 +1065,8 @@ function openSyncConflict(){
       </div>
     </div>
     ${diffHtml}
+    ${d.onlyLocal.length?`<button class="btn btn-full sync-btn-merge" onclick="resolveConflict('merge')">🔀 Slå sammen</button>
+    <div class="sync-hint">Beholder alt fra OneDrive og legger til ${m.added} økt${m.added===1?'':'er'} som bare finnes her${m.kept?`. ${m.kept} økt${m.kept===1?'':'er'} som finnes begge steder, beholdes slik de er i OneDrive`:''}. Lagres i OneDrive etterpå.</div>`:''}
     <button class="btn btn-full sync-btn-down" onclick="resolveConflict('remote')">☁️↓ Bruk OneDrive-versjonen</button>
     <div class="sync-hint">Endringene på denne enheten tas vare på som backup (Innstillinger → Data).</div>
     <button class="btn btn-full sync-btn-up" onclick="resolveConflict('local')">📱↑ Bruk versjonen på denne enheten</button>
@@ -1016,7 +1081,14 @@ async function resolveConflict(choice){
   const c=graphConflict;
   closeSyncModal();
   if(!c){ graphCheck('manual'); return; }
-  if(choice==='remote'){
+  if(choice==='merge'){
+    const m=mergeData({students,exercises,sessions,templates},c.remote);
+    backupLocal('Før sammenslåing med OneDrive');
+    pullApply(m.data,c.meta);   // OneDrive's eTag: the upload below only succeeds if nobody saved meanwhile
+    markLocalChange();
+    await graphPush({silent:true});
+    toast(`🔀 Slått sammen: ${m.added} økt${m.added===1?'':'er'} lagt til i OneDrive`);
+  } else if(choice==='remote'){
     pullApply(c.remote,c.meta);
     toast('☁️ OneDrive-versjonen brukes — lokal backup er tatt');
   } else if(choice==='local'){
@@ -1066,7 +1138,7 @@ function updateSyncUI(){
   if(!b) return;
   let html='';
   if(st==='loggedout'){
-    html=`<span>⚠️ Logget ut av OneDrive — endringer lagres bare på denne enheten${isDirty()?' (har usendte endringer)':''}.</span><button class="btn btn-sm btn-primary" onclick="bannerLogin()">Logg inn</button>`;
+    html=`<span>⚠️ Logget ut av OneDrive — endringer lagres bare på denne enheten${isDirty()?' (har usendte endringer)':''}.${lsStr(K.account)?` Logg inn med <b>${esc(lsStr(K.account))}</b>.`:''}</span><button class="btn btn-sm btn-primary" onclick="bannerLogin()">Logg inn</button>`;
   } else if(st==='conflict'){
     html=`<span>⚠️ OneDrive og denne enheten har ulike endringer.</span><button class="btn btn-sm btn-primary" onclick="openSyncConflict()">Velg versjon</button>`;
   } else if(st==='paused'){
@@ -1925,7 +1997,7 @@ function renderSettings(){
             ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
                 <span style="width:10px;height:10px;border-radius:50%;background:${syncState()==='ok'?'var(--green)':(syncState()==='pending'||syncState()==='checking')?'var(--yellow)':'var(--red)'};display:inline-block;flex-shrink:0"></span>
                 <div style="flex:1;min-width:0">
-                  <div style="font-size:13px;overflow-wrap:anywhere">Innlogget: <strong>${esc(graphAccount().username||'Microsoft-konto')}</strong></div>
+                  <div style="font-size:13px;overflow-wrap:anywhere">Konto: <strong>${esc(graphAccount().username||'Microsoft-konto')}</strong></div>
                   <div style="font-size:13px;margin-top:2px">${SYNC_TEXT[syncState()]||''}${graphError?` <span style="color:var(--text2)">(${esc(graphError)})</span>`:''}</div>
                   ${lsStr(K.savedAt)?`<div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:2px">Sist lagret i OneDrive: ${esc(lsStr(K.savedFrom)||'?')} · ${esc(fmtStamp(lsStr(K.savedAt)))}</div>`:''}
                 </div>
@@ -1941,7 +2013,11 @@ function renderSettings(){
                <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">
                  Appen henter nyeste data automatisk når den åpnes, og sjekker OneDrive før den lagrer. Har en annen enhet lagret i mellomtiden, får du velge hvilken versjon som skal gjelde — ingenting overskrives i det stille.
                </div>
-               <button class="btn btn-ghost btn-full btn-sm" onclick="signOutMicrosoft()">Logg ut</button>`
+               <div style="display:flex;gap:8px">
+                 <button class="btn btn-secondary btn-sm" style="flex:1" onclick="switchMicrosoftAccount()">🔁 Bytt konto</button>
+                 <button class="btn btn-ghost btn-sm" style="flex:1" onclick="signOutMicrosoft()">Logg ut</button>
+               </div>
+               <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.4">Hver Microsoft-konto har sin egen OneDrive og sin egen datafil. Bruk samme konto på alle enheter.</div>`
             : `${lsStr(K.wasIn)==='1'?`<div style="background:rgba(255,69,58,0.12);border:1px solid rgba(255,69,58,0.3);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text);margin-bottom:12px">
                  ⚠️ Du er logget ut. Endringer lagres bare på denne enheten${isDirty()?' — du har endringer som ikke er sendt':''}. Logg inn igjen for å synkronisere.
                </div>`:`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">
@@ -2662,6 +2738,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const sa=lsStr(K.savedAt); if(sa&&sa.startsWith('"')){ try{ lsSet(K.savedAt,JSON.parse(sa)); }catch{} }
   // Existing OneDrive users from before this version count as "OneDrive used on this device"
   if(graphAccount()) lsSet(K.wasIn,'1');
+  if(graphAccount() && !lsStr(K.account) && lsStr(K.etag)) lsSet(K.account,localStorage.getItem('ms_username'));
   loadAll();
   practiceState=newPracticeState();
   renderPractice();
